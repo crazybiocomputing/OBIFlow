@@ -1,0 +1,11 @@
+# Temporary gedit files
+############################
+**/*.*~
+**/*.old
+
+# Miscellaneous files
+############################
+node_modules/
+misc/
+
+
