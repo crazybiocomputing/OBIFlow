@@ -1,0 +1,16 @@
+ {
+    "name"   :"calcNumber",
+    "comment": "Container of arithmetic Functions",
+    "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+    "knots"  : ["xoxi"],
+    "title"  : "Calculator",
+    "input"  : "number",
+    "output" : "number",
+    "args"   : ["expression"],
+    "icon"   :"calcNumber",
+    "default_status":"a[0;true]",
+    "description": {
+        "title":"",
+        "content":""
+    }
+ }

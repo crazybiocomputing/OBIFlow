@@ -1,0 +1,16 @@
+ {
+    "name"   : "filter",
+    "comment": "Filter Function",
+    "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+    "knots"  : ["xooi","ooxi"],
+    "title"  : "Filter Function",
+    "input"  : "[any]",
+    "output" : "[any]",
+    "args"   : ["function"],
+    "icon"   : "filter",
+    "default_status":"a[0;true]",
+    "description": {
+        "title":"Help of Filter function",
+        "content":"A filter uses a predicate to filter some of the elements of the input array"
+    },
+ }

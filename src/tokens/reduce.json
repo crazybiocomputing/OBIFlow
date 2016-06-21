@@ -1,0 +1,16 @@
+ {
+    "name"   : "reduce",
+    "comment": "Reduce Function",
+    "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+    "knots"  : ["xooi","ooxi"],
+    "title"  : "Reduce Function",
+    "input"  : "[any]",
+    "output" : "[any]",
+    "args"   : ["function", "accumulator"],
+    "icon"   : "reduce_stack",
+    "default_status":"a[0;true]",
+    "description": {
+        "title":"",
+        "content":"Init accumulator &larr;"
+    },
+ }
