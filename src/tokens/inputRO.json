@@ -1,0 +1,16 @@
+ {
+    "name"   : "inputRO",
+    "comment": "Input Read Only",
+    "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+    "knots"  : ["oxxx"],
+    "title"  : "Variable",
+    "input"  : "none",
+    "output" : "any",
+    "args"   : "none",
+    "icon"   :"inputRO",
+    "description": {
+        "title"  :"var x &larr; ",
+        "content":""
+    }
+    "default_status":"a[0;true]",
+ }

@@ -1,0 +1,16 @@
+ {
+    "name"   : "map",
+    "comment": "Map Function",
+    "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+    "knots"  : ["xooi","ooxi"],
+    "title"  : "Map Function",
+    "input"  : "[any]",
+    "output" : "[any]",
+    "args"   : ["function"],
+    "icon"   : "map",
+    "default_status":"a[0;true]",
+    "description": {
+        "title":"",
+        "content":""
+    },
+ }

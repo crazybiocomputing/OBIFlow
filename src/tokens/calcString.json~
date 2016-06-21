@@ -1,0 +1,64 @@
+ {
+    "name"   :"calcString",
+    "comment": "Container of String Functions",
+    "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+    "knots"  : ["xoxi"],
+    "title"  : "String Calculator",
+    "input"  : "string",
+    "output" : "any",
+    "args"   : "expression",
+    "icon"   :"inputRO",
+    "default_status":"a[0;true]",
+    "description": {
+        "title":"",
+        "content":""
+    },
+    "functions" : [
+        {
+            "name"   : "length",
+            "args"   : ["none"],
+            "comment": "Returns String length",
+            "input"  : "string",
+            "output" : "number",
+            "args"   : []
+        },
+        {
+            "name": "lower",
+            "args": ["none"],
+            "comment": "Returns string converted to lowercase",
+            "input"  : "string",
+            "output" : "string",
+            "args"   : []
+        },
+        {
+            "name": "upper",
+            "args": ["none"],
+            "comment": "Returns string converted to uppercase",
+            "input"  : "string",
+            "output" : "string",
+            "args"   : []
+        },
+        {
+            "name": "split",
+            "comment": "Returns array of strings split by specified separator. By default, no separator",
+            "input"  : "string",
+            "output" : "[string]",
+            "args": ["string"]
+        },
+        {
+            "name": "indexOf",
+            "comment": "Returns index corresponding to the first occurence.",
+            "input"  : "string",
+            "output" : "number",
+            "args": ["regex"]
+        },
+        {
+            "name": "match",
+            "args": ["regex"],
+            "comment": "Returns array of strings split by specified separator. By default, no separator",
+            "input"  : "string",
+            "output" : "[string]",
+            "args": ["regex"]
+        },
+    ]
+ }
