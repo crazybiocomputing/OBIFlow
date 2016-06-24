@@ -27,7 +27,7 @@ function Game(div_name) {
     this.components = [];
 }
 
-Game.TOKENSIZE = 80;
+Game.TOKENSIZE = 100;
 
 Game.HOME_FLOW = function () {
     return '../';

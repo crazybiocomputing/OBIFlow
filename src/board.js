@@ -40,4 +40,7 @@ Board.prototype.setViewport = function (w,h) {
 
 Board.prototype.render = function () {
     // TODO
+    document.getElementById(this.name).setAttribute("style",'width:'  + (this.viewport.w * Game.TOKENSIZE) + 'px'); 
+    document.getElementById(this.name).setAttribute("style",'height:' + (this.viewport.h * Game.TOKENSIZE) + 'px');
+
 }

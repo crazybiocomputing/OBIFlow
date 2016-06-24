@@ -36,6 +36,8 @@ function SandBox(div_name) {
 }
 
 SandBox.allTokens = [
+    {type: 'biotools'     , copies: 99},
+    {type: 'calcArray'    , copies: 99},
     {type: 'calcNumber'   , copies: 99},
     {type: 'calcString'   , copies: 99},
     {type: 'database'     , copies: 99},
