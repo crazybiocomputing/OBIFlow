@@ -24,38 +24,47 @@
 
 function Token(options) {
     // Init
-    this.ID = options.ID || -1;
+    this.ID = options.ID || 'UNK__TOK';
+    this.name = options.name || 'unknown';
+    this.description = options.description  || {title:'None',contents:''};
+    this.title = options.title || 'No title';
     this.props = options.props || (Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE);
     this.status = -1;
+    this.weight = 1;
+    this.type = options.type || 'X';
+
+    // Geometry and Board location
     this.orgx = options.orgx || 0;
     this.orgy = options.orgy || 0;
     this.width = options.width || Game.TOKENSIZE;
     this.height = options.height || Game.TOKENSIZE;
-    this.type = options.type || 'X';
-    this.title = options.title || 'No title';
-    this.angle = options.angle || 0;
-    this.description = options.description  || {title:'None',contents:''};
-    this.nodes = options.nodes;
     this.cell_x = (options.cell_x != null) ? options.cell_x : -1;
     this.cell_y = (options.cell_y != null) ? options.cell_y : -1;
+    
+    // Knot(s)
     this.knots=options.knots || 'ixox';
-    this.background_color=options.background_color || '#FFFFFF';
+    this.angle = options.angle || 0; // Rotation angle of knot(s)
+    this.nodes = options.nodes;
 
+
+    // Obsolete
+    // Images of various layers composing the token
+    // See svg
+    this.background_color=options.background_color || '#FFFFFF';
     this.path_img = Game.HOME_FLOW() +'/images/';
     this.background=options.background || 'background_token.png';
     this.knots_img = 'knots_row.png';
     this.icon = options.icon || 'question_mark.png';
-    
     if (this.icon.indexOf("../crazybioflow/img/") != -1) {
         // Backward compatibility
         this.icon = this.icon.substring(20,this.icon.length);
     }
-
-    this.svg = options.svg ||  {type: "circle",data: {"r": 50, "cx": 50, "cy": 50, "fill": "green"} };
-
-
     this.clip=options.clip || 'undefined';
     this.clip_left=options.clip_left || 0;
+    
+    
+    // New ??
+    this.svg = options.svg ||  {type: "circle",data: {"r": 50, "cx": 50, "cy": 50, "fill": "green"} };
 
     console.log('new Token '+this.ID+ ' '+this.cell_x+' '+this.cell_y+' '+this.props);
 }
@@ -66,6 +75,92 @@ Token.LINKABLE    = 4;
 Token.MOVABLE     = 8;
 Token.RENDERABLE  = 16;
 Token.ROTATABLE   = 32;
+
+/**
+Token.prototype.mousedown = ;
+        
+Token.prototype.drag = 
+
+Token.prototype.end_of_drag = 
+**/
+
+Token.prototype.getHTMLElement = function() {
+    return document.getElementById(this.name);
+};
+
+
+Token.prototype.init = function() {
+
+    var self = this;
+    
+    // Click to open popup
+    function click(ev) {
+        ev = ev || window.event;
+        console.log('click '+el.ID+' '+self.xStart+' ' + self.yStart );
+        if (self.props & Token.MOVABLE) {
+
+        }
+        return false;
+    }
+
+
+    var el = document.getElementById(self.name);
+
+    // Click to open popup
+    el.addEventListener("click",click,false); 
+    
+    // Initiate the drag
+    el.addEventListener("mousedown", 
+        function (ev) {
+            ev = ev || window.event;
+            self.dragMode = false;
+            if ( (self.props & Token.MOVABLE) === Token.MOVABLE) {
+                self.dragMode = true;
+            }
+            self.xStart = parseInt(ev.clientX);
+            self.yStart = parseInt(ev.clientY);
+            console.log('down '+self.ID+' '+self.xStart+' ' + self.yStart +' '+ self.dragMode);
+            
+            var el = document.getElementById(self.name);
+            el.style.zIndex = 99;
+            el.removeEventListener('click',click);
+            
+            return false;
+        },
+        false); 
+    
+    el.addEventListener("mousemove", 
+        function (ev) {
+            ev = ev || window.event;
+            if (self.dragMode === true) {
+                self.xDelta = parseInt(ev.clientX) - self.xStart;
+                self.yDelta = parseInt(ev.clientY) - self.yStart;
+                self.xStart = parseInt(ev.clientX);
+                self.yStart = parseInt(ev.clientY);
+                console.log('mousemove '+self.ID+' '+ev.clientX+ ' ' + ev.clientY +' '+ev.target+' ' + self.xDelta+' ' + self.yDelta +' '+ self.dragMode);
+                // Update css style
+                var el = document.getElementById(self.name);
+                console.log('Offsets '+el.offsetLeft+' '+ el.offsetTop);
+
+                el.style.left = (el.offsetLeft + self.xDelta ) + 'px';
+                el.style.top  = (el.offsetTop  + self.yDelta ) + 'px';
+            }
+            return false;
+        },
+        false);
+
+
+    el.addEventListener("mouseup", 
+        function (ev) {
+            self.dragMode = false;
+            console.log('mouseup '+self.ID+' '+self.xStart+' ' + self.yStart +' '+ self.dragMode);
+            var el = document.getElementById(self.name);
+            el.style.zIndex = 1;
+            el.addEventListener('click',click);
+        },
+        false);
+        
+}
 
 
 Token.prototype.getKnotRect = function(type) {

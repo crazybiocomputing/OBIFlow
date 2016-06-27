@@ -36,27 +36,28 @@ function SandBox(div_name) {
 }
 
 SandBox.allTokens = [
-    {type: 'biotools'     , copies: 99},
-    {type: 'calcArray'    , copies: 99},
-    {type: 'calcNumber'   , copies: 99},
-    {type: 'calcString'   , copies: 99},
-    {type: 'database'     , copies: 99},
-    {type: 'filter'       , copies: 99},
-    {type: 'fold'         , copies: 99},
-    {type: 'function'     , copies: 99},
-    {type: 'hub'          , copies: 99},
-    {type: 'if_then_else' , copies: 99},
-    {type: 'input_rw'     , copies: 99},
-    {type: 'input_cloud'  , copies: 99},
-    {type: 'input_new'    , copies: 99},
-    {type: 'map'          , copies: 99},
-    {type: 'return_filter', copies: 99},
-    {type: 'return_fold'  , copies: 99},
-    {type: 'return_map'   , copies: 99},
-    {type: 'settings'     , copies: 99},
-    {type: 'search'       , copies: 99},
-    {type: 'view'         , copies: 1},
-    {type: 'view_plot'    , copies: 1}
+    {type: 'biotools'     , copies: 10, current: 0},
+    {type: 'calcArray'    , copies: 10, current: 0},
+    {type: 'calcNumber'   , copies: 10, current: 0},
+    {type: 'calcString'   , copies: 10, current: 0},
+    {type: 'database'     , copies: 10, current: 0},
+    {type: 'filter'       , copies: 10, current: 0},
+    {type: 'fold'         , copies: 10, current: 0},
+    {type: 'function'     , copies: 10, current: 0},
+    {type: 'hub'          , copies: 10, current: 0},
+    {type: 'if_then_else' , copies: 10, current: 0},
+    {type: 'input_ro'     , copies: 10, current: 0},
+    {type: 'input_rw'     , copies: 10, current: 0},
+    {type: 'input_cloud'  , copies: 10, current: 0},
+    {type: 'input_new'    , copies: 10, current: 0},
+    {type: 'map'          , copies: 10, current: 0},
+    {type: 'return_filter', copies: 10, current: 0},
+    {type: 'return_fold'  , copies: 10, current: 0},
+    {type: 'return_map'   , copies: 10, current: 0},
+    {type: 'settings'     , copies: 10, current: 0},
+    {type: 'search'       , copies: 10, current: 0},
+    {type: 'view'         , copies: 1 , current: 0},
+    {type: 'view_plot'    , copies: 1 , current: 0}
 ];
 
 SandBox.prototype.addTokens = function(toks) {
@@ -73,7 +74,30 @@ SandBox.prototype.addTokens = function(toks) {
     );
 
     console.log(this.tokens);
-}
+};
+
+SandBox.prototype.init = function() {
+    var self = this;
+    // Update Sandbox
+    var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
+    this.element.clientHeight = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
+
+    this.tokens.forEach(
+        function (tok,index,array) {
+            console.log('init Child');
+            console.log(self.element);
+            self.element.appendChild(tok.token.html);
+            tok.token.init();
+            
+            // Location in sandbox
+            var max_tokens_per_row = Math.floor(parseInt(self.element.clientWidth) / Game.TOKENSIZE);
+            console.log(max_tokens_per_row);
+            tok.token.getHTMLElement().style.left = (Game.TOKENSIZE * (index % max_tokens_per_row) ) + 'px';
+            tok.token.getHTMLElement().style.top  = (Game.TOKENSIZE * Math.floor(index / max_tokens_per_row) ) + 'px';
+        }
+    );
+};
+
 
 SandBox.prototype.render = function() {
     var self = this;
@@ -85,6 +109,6 @@ SandBox.prototype.render = function() {
             self.element.appendChild(tok.token.html);
         }
     );
-}
+};
 
 

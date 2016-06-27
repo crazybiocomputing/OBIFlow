@@ -23,11 +23,54 @@
  */
 
 var TokenFactory = (function() {
+    var arrowHead = 'm 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z';
+    var arrowTail = '';
+    
+    // Private - Create all the buttons
+    
+    
+    // Private - Create all the knots
+    function createKnots(k) {
+        var svg_node = document.createElementNS('http://www.w3.org/2000/svg','g');
+            svg_node.setAttributeNS(null,'id','knots');
+            svg_node.setAttributeNS(null,'transform','rotate(0,500,500)');
 
+            for (var i=0; i < k.length; i++) {
+                if (k[i] === 'i') {
+                    var tmp = document.createElementNS('http://www.w3.org/2000/svg','path');
+                    var angle = 90*i;
+                    tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
+                    tmp.setAttributeNS(null,'d',arrowHead);
+                    tmp.setAttributeNS(null,'fill','#ffffff');
+                    tmp.setAttributeNS(null,'stroke','#000000');
+                    tmp.setAttributeNS(null,'stroke-width',18.0);
+                    tmp.setAttributeNS(null,'stroke-linejoin','round');
+                    svg_node.appendChild(tmp);
+                }
+                else if (k[i] === 'o') {
+                    var tmp = document.createElementNS('http://www.w3.org/2000/svg','rect');
+                    var angle = (90*i + 180)%360; // HACK
+                    tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
+                    tmp.setAttributeNS(null,'x',500.0 - 165/2.0);
+                    tmp.setAttributeNS(null,'y',9.0);
+                    tmp.setAttributeNS(null,'width',165);
+                    tmp.setAttributeNS(null,'height',128);
+                    tmp.setAttributeNS(null,'fill','#FFFFFF');
+                    tmp.setAttributeNS(null,'stroke','#000000');
+                    tmp.setAttributeNS(null,'stroke-width',18.0);
+                    svg_node.appendChild(tmp);
+                }
+            }
+        return svg_node;
+    }
     return {
-        get: function (options) {;
+        get: function (options) {
+        
+            // Create token depending of its type
             var tok = new Token(tokenIDs[options.type]);
             console.log(JSON.stringify(tok));
+            
+            /* Obsolete
             tok.html='<div class="token" id="'+tok.ID
                     +'" style="background:'+tok.background_color
                     +';" onmousedown="move(this,event)">';
@@ -56,13 +99,7 @@ var TokenFactory = (function() {
                         + 'src="'+tok.path_img+tok.background+'" onmousedown="return false;">';
             }
 
-            // Knot(s)
-            var _knots = tok.knots[0];
-            for (var i=0;i<4;i++) {
-                if (_knots[i] != 'x') {
-                  tok.html+='<img class="knot" id="'+ _knots[i].toLowerCase() + i + '_' + tok.ID + '" src="' + tok.path_img + tok.knots_img + '" onmousedown="return false;">';
-                }
-            }
+
 
             // Icon
             if (tok.clip === undefined) {
@@ -77,11 +114,16 @@ var TokenFactory = (function() {
                         + tok.clip_left+';clip:'+tok.clip+';" src="'+tok.path_img+tok.icon+'" onmousedown="return false;">';
             }
 
+            */
+            
+            // Create GUI 
+            
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttributeNS(null,'width', Game.TOKENSIZE);
             svg.setAttributeNS(null,'height', Game.TOKENSIZE);
             svg.setAttributeNS(null,'viewBox', '0 0 1000 1000');
-            svg.setAttributeNS(null,'class', 'token');
+            svg.setAttributeNS(null,'transform', 'matrix(1 0 0 1 0 0)');
+
             
             // Background
             var bckgd = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -112,46 +154,19 @@ var TokenFactory = (function() {
             buttonNE.setAttributeNS(null,'r',105);
             buttonNE.setAttributeNS(null,'fill','#FF8000');
             buttonNE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+
+            buttonNE.addEventListener('click',
+                function(ev) {
+                    console.log(ev.target);
+                    var knots_layer = ev.target.parentNode.querySelector("#knots");
+                    var arr = knots_layer.getAttributeNS(null, "transform").slice(7,-1).split(',');
+                    arr[0] = (parseInt(arr[0])+90)%360;
+                    knots_layer.setAttributeNS(null,'transform','rotate('+arr.join(',')+')');
+                });
             svg.appendChild(buttonNE);
-           
-            // Knot(s)
-            var knots = document.createElementNS('http://www.w3.org/2000/svg','g');
-            knots.setAttributeNS(null,'id','knots');
-            knots.setAttributeNS(null,'transform','rotate(0,500,500)');
-            var outN = document.createElementNS('http://www.w3.org/2000/svg','rect');
-            outN.setAttributeNS(null,'x',500.0 - 165/2.0);
-            outN.setAttributeNS(null,'y',9.0);
-            outN.setAttributeNS(null,'width',165);
-            outN.setAttributeNS(null,'height',128);
-            outN.setAttributeNS(null,'fill','#FFFFFF');
-            outN.setAttributeNS(null,'stroke','#000000');
-            outN.setAttributeNS(null,'stroke-width',18.0);
-            knots.appendChild(outN);
-            var inS = document.createElementNS('http://www.w3.org/2000/svg','path');
-            inS.setAttributeNS(null,'d','m 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z');
-            inS.setAttributeNS(null,'fill','#ffffff');
-            inS.setAttributeNS(null,'stroke','#000000');
-            inS.setAttributeNS(null,'stroke-width',18.0);
-            inS.setAttributeNS(null,'stroke-linejoin','round');
-            knots.appendChild(inS);
-            var inE = document.createElementNS('http://www.w3.org/2000/svg','path');
-            inE.setAttributeNS(null,'d','m 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z');
-            inE.setAttributeNS(null,'transform','rotate(90,500,500)');
-            inE.setAttributeNS(null,'fill','#00ff00');
-            inE.setAttributeNS(null,'stroke','#000000');
-            inE.setAttributeNS(null,'stroke-width',18.0);
-            inE.setAttributeNS(null,'stroke-linejoin','round');
-            knots.appendChild(inE);
-            var inW = document.createElementNS('http://www.w3.org/2000/svg','path');
-            inW.setAttributeNS(null,'d','m 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z');
-            inW.setAttributeNS(null,'transform','rotate(-90,500,500)');
-            inW.setAttributeNS(null,'fill','#00ff00');
-            inW.setAttributeNS(null,'stroke','#000000');
-            inW.setAttributeNS(null,'stroke-width',18.0);
-            inW.setAttributeNS(null,'stroke-linejoin','round');
-            knots.appendChild(inW);
             
-            svg.appendChild(knots);
+            // Knot(s)
+            svg.appendChild(createKnots(tok.knots[0]) );
            
            // Icon
             var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);
@@ -171,8 +186,18 @@ var TokenFactory = (function() {
 
             svg.appendChild(primitive);
             
-                
-            tok.html=svg;
+            // Embed svg in a div for sake of convenience
+            var finalTok = document.createElement('div');
+            finalTok.setAttribute('title',tok.title);
+
+            var klass = 'token';
+            if ( (tok.props & Token.MOVABLE) === Token.MOVABLE) {
+                klass += ' draggable';
+            }
+            finalTok.setAttribute('class', klass);
+            finalTok.setAttribute('id', tok.name);
+            finalTok.appendChild(svg);
+            tok.html=finalTok;
             return tok;
         }
     }

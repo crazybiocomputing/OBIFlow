@@ -27,7 +27,7 @@ function Game(div_name) {
     this.components = [];
 }
 
-Game.TOKENSIZE = 100;
+Game.TOKENSIZE = 80;
 
 Game.HOME_FLOW = function () {
     return '../';
@@ -36,6 +36,10 @@ Game.HOME_FLOW = function () {
 
 Game.prototype.add = function (component) {
     this.components.push(component);
+}
+
+Game.prototype.init = function () {
+    this.components.forEach(function(el) {el.init();});
 }
 
 Game.prototype.render = function () {

@@ -98,9 +98,9 @@ var tokenIDs = {
      },
     'calcString'   : {
         "ID"     : "STRG_TOK",
-        "name"   :"calcString",
+        "name"   : "calcString",
         "comment": "Container of String Functions",
-        "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi"],
         "title"  : "String Calculator",
         "input"  : "string",
@@ -283,11 +283,11 @@ var tokenIDs = {
     },
     'hub'          :  {
          "ID"    : "HUB__TOK",
-        "name"   : "function",
-        "comment": "Function f(x)",
+        "name"   : "hub",
+        "comment": "Hub used to insert additional inputs in the flow",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Function f(x)",
+        "title"  : "Hub",
         "svg"    : {
             "type": "g",
             "data": {},
@@ -380,11 +380,11 @@ var tokenIDs = {
     },
     'input_cloud'  :  {
          "ID"    : "CLUD_TOK",
-        "name"   : "function",
-        "comment": "Function f(x)",
+        "name"   : "input_cloud",
+        "comment": "Input obtained from the cloud",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Function f(x)",
+        "title"  : "Input from the Cloud",
         "svg"    : {
             "type": "path",
             "data": {
@@ -402,11 +402,11 @@ var tokenIDs = {
     },
     'input_new'    : {
          "ID"    : "INEW_TOK",
-        "name"   : "function",
-        "comment": "Function f(x)",
+        "name"   : "input_new",
+        "comment": "Input with creation of a new variable from other input",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Function f(x)",
+        "title"  : "Input with Creation",
         "svg"    : {
             "type": "circle",
             "data": {"r": 200, "cx": 500, "cy": 500, "fill": "green"}

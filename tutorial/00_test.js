@@ -57,6 +57,9 @@ function init() {
     game.add(board);
     game.add(sandbox);
     
+    // Init
+    game.init();
+    
     // Render
     game.render();
 }

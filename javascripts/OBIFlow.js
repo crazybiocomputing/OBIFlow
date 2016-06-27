@@ -38,10 +38,15 @@ Board.prototype.setViewport = function (w,h) {
     this.viewport.h = h;
 }
 
-Board.prototype.render = function () {
+Board.prototype.init = function () {
     // TODO
     document.getElementById(this.name).setAttribute("style",'width:'  + (this.viewport.w * Game.TOKENSIZE) + 'px'); 
     document.getElementById(this.name).setAttribute("style",'height:' + (this.viewport.h * Game.TOKENSIZE) + 'px');
+
+}
+
+Board.prototype.render = function () {
+    // TODO
 
 }
 
@@ -74,7 +79,7 @@ function Game(div_name) {
     this.components = [];
 }
 
-Game.TOKENSIZE = 100;
+Game.TOKENSIZE = 80;
 
 Game.HOME_FLOW = function () {
     return '../';
@@ -83,6 +88,10 @@ Game.HOME_FLOW = function () {
 
 Game.prototype.add = function (component) {
     this.components.push(component);
+}
+
+Game.prototype.init = function () {
+    this.components.forEach(function(el) {el.init();});
 }
 
 Game.prototype.render = function () {
@@ -298,27 +307,28 @@ function SandBox(div_name) {
 }
 
 SandBox.allTokens = [
-    {type: 'biotools'     , copies: 99},
-    {type: 'calcArray'    , copies: 99},
-    {type: 'calcNumber'   , copies: 99},
-    {type: 'calcString'   , copies: 99},
-    {type: 'database'     , copies: 99},
-    {type: 'filter'       , copies: 99},
-    {type: 'fold'         , copies: 99},
-    {type: 'function'     , copies: 99},
-    {type: 'hub'          , copies: 99},
-    {type: 'if_then_else' , copies: 99},
-    {type: 'input_rw'     , copies: 99},
-    {type: 'input_cloud'  , copies: 99},
-    {type: 'input_new'    , copies: 99},
-    {type: 'map'          , copies: 99},
-    {type: 'return_filter', copies: 99},
-    {type: 'return_fold'  , copies: 99},
-    {type: 'return_map'   , copies: 99},
-    {type: 'settings'     , copies: 99},
-    {type: 'search'       , copies: 99},
-    {type: 'view'         , copies: 1},
-    {type: 'view_plot'    , copies: 1}
+    {type: 'biotools'     , copies: 10, current: 0},
+    {type: 'calcArray'    , copies: 10, current: 0},
+    {type: 'calcNumber'   , copies: 10, current: 0},
+    {type: 'calcString'   , copies: 10, current: 0},
+    {type: 'database'     , copies: 10, current: 0},
+    {type: 'filter'       , copies: 10, current: 0},
+    {type: 'fold'         , copies: 10, current: 0},
+    {type: 'function'     , copies: 10, current: 0},
+    {type: 'hub'          , copies: 10, current: 0},
+    {type: 'if_then_else' , copies: 10, current: 0},
+    {type: 'input_ro'     , copies: 10, current: 0},
+    {type: 'input_rw'     , copies: 10, current: 0},
+    {type: 'input_cloud'  , copies: 10, current: 0},
+    {type: 'input_new'    , copies: 10, current: 0},
+    {type: 'map'          , copies: 10, current: 0},
+    {type: 'return_filter', copies: 10, current: 0},
+    {type: 'return_fold'  , copies: 10, current: 0},
+    {type: 'return_map'   , copies: 10, current: 0},
+    {type: 'settings'     , copies: 10, current: 0},
+    {type: 'search'       , copies: 10, current: 0},
+    {type: 'view'         , copies: 1 , current: 0},
+    {type: 'view_plot'    , copies: 1 , current: 0}
 ];
 
 SandBox.prototype.addTokens = function(toks) {
@@ -335,7 +345,30 @@ SandBox.prototype.addTokens = function(toks) {
     );
 
     console.log(this.tokens);
-}
+};
+
+SandBox.prototype.init = function() {
+    var self = this;
+    // Update Sandbox
+    var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
+    this.element.clientHeight = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
+
+    this.tokens.forEach(
+        function (tok,index,array) {
+            console.log('init Child');
+            console.log(self.element);
+            self.element.appendChild(tok.token.html);
+            tok.token.init();
+            
+            // Location in sandbox
+            var max_tokens_per_row = Math.floor(parseInt(self.element.clientWidth) / Game.TOKENSIZE);
+            console.log(max_tokens_per_row);
+            tok.token.getHTMLElement().style.left = (Game.TOKENSIZE * (index % max_tokens_per_row) ) + 'px';
+            tok.token.getHTMLElement().style.top  = (Game.TOKENSIZE * Math.floor(index / max_tokens_per_row) ) + 'px';
+        }
+    );
+};
+
 
 SandBox.prototype.render = function() {
     var self = this;
@@ -347,7 +380,7 @@ SandBox.prototype.render = function() {
             self.element.appendChild(tok.token.html);
         }
     );
-}
+};
 
 
 
@@ -377,38 +410,47 @@ SandBox.prototype.render = function() {
 
 function Token(options) {
     // Init
-    this.ID = options.ID || -1;
+    this.ID = options.ID || 'UNK__TOK';
+    this.name = options.name || 'unknown';
+    this.description = options.description  || {title:'None',contents:''};
+    this.title = options.title || 'No title';
     this.props = options.props || (Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE);
     this.status = -1;
+    this.weight = 1;
+    this.type = options.type || 'X';
+
+    // Geometry and Board location
     this.orgx = options.orgx || 0;
     this.orgy = options.orgy || 0;
     this.width = options.width || Game.TOKENSIZE;
     this.height = options.height || Game.TOKENSIZE;
-    this.type = options.type || 'X';
-    this.title = options.title || 'No title';
-    this.angle = options.angle || 0;
-    this.description = options.description  || {title:'None',contents:''};
-    this.nodes = options.nodes;
     this.cell_x = (options.cell_x != null) ? options.cell_x : -1;
     this.cell_y = (options.cell_y != null) ? options.cell_y : -1;
+    
+    // Knot(s)
     this.knots=options.knots || 'ixox';
-    this.background_color=options.background_color || '#FFFFFF';
+    this.angle = options.angle || 0; // Rotation angle of knot(s)
+    this.nodes = options.nodes;
 
+
+    // Obsolete
+    // Images of various layers composing the token
+    // See svg
+    this.background_color=options.background_color || '#FFFFFF';
     this.path_img = Game.HOME_FLOW() +'/images/';
     this.background=options.background || 'background_token.png';
     this.knots_img = 'knots_row.png';
     this.icon = options.icon || 'question_mark.png';
-    
     if (this.icon.indexOf("../crazybioflow/img/") != -1) {
         // Backward compatibility
         this.icon = this.icon.substring(20,this.icon.length);
     }
-
-    this.svg = options.svg ||  {type: "circle",data: {"r": 50, "cx": 50, "cy": 50, "fill": "green"} };
-
-
     this.clip=options.clip || 'undefined';
     this.clip_left=options.clip_left || 0;
+    
+    
+    // New ??
+    this.svg = options.svg ||  {type: "circle",data: {"r": 50, "cx": 50, "cy": 50, "fill": "green"} };
 
     console.log('new Token '+this.ID+ ' '+this.cell_x+' '+this.cell_y+' '+this.props);
 }
@@ -419,6 +461,92 @@ Token.LINKABLE    = 4;
 Token.MOVABLE     = 8;
 Token.RENDERABLE  = 16;
 Token.ROTATABLE   = 32;
+
+/**
+Token.prototype.mousedown = ;
+        
+Token.prototype.drag = 
+
+Token.prototype.end_of_drag = 
+**/
+
+Token.prototype.getHTMLElement = function() {
+    return document.getElementById(this.name);
+};
+
+
+Token.prototype.init = function() {
+
+    var self = this;
+    
+    // Click to open popup
+    function click(ev) {
+        ev = ev || window.event;
+        console.log('click '+el.ID+' '+self.xStart+' ' + self.yStart );
+        if (self.props & Token.MOVABLE) {
+
+        }
+        return false;
+    }
+
+
+    var el = document.getElementById(self.name);
+
+    // Click to open popup
+    el.addEventListener("click",click,false); 
+    
+    // Initiate the drag
+    el.addEventListener("mousedown", 
+        function (ev) {
+            ev = ev || window.event;
+            self.dragMode = false;
+            if ( (self.props & Token.MOVABLE) === Token.MOVABLE) {
+                self.dragMode = true;
+            }
+            self.xStart = parseInt(ev.clientX);
+            self.yStart = parseInt(ev.clientY);
+            console.log('down '+self.ID+' '+self.xStart+' ' + self.yStart +' '+ self.dragMode);
+            
+            var el = document.getElementById(self.name);
+            el.style.zIndex = 99;
+            el.removeEventListener('click',click);
+            
+            return false;
+        },
+        false); 
+    
+    el.addEventListener("mousemove", 
+        function (ev) {
+            ev = ev || window.event;
+            if (self.dragMode === true) {
+                self.xDelta = parseInt(ev.clientX) - self.xStart;
+                self.yDelta = parseInt(ev.clientY) - self.yStart;
+                self.xStart = parseInt(ev.clientX);
+                self.yStart = parseInt(ev.clientY);
+                console.log('mousemove '+self.ID+' '+ev.clientX+ ' ' + ev.clientY +' '+ev.target+' ' + self.xDelta+' ' + self.yDelta +' '+ self.dragMode);
+                // Update css style
+                var el = document.getElementById(self.name);
+                console.log('Offsets '+el.offsetLeft+' '+ el.offsetTop);
+
+                el.style.left = (el.offsetLeft + self.xDelta ) + 'px';
+                el.style.top  = (el.offsetTop  + self.yDelta ) + 'px';
+            }
+            return false;
+        },
+        false);
+
+
+    el.addEventListener("mouseup", 
+        function (ev) {
+            self.dragMode = false;
+            console.log('mouseup '+self.ID+' '+self.xStart+' ' + self.yStart +' '+ self.dragMode);
+            var el = document.getElementById(self.name);
+            el.style.zIndex = 1;
+            el.addEventListener('click',click);
+        },
+        false);
+        
+}
 
 
 Token.prototype.getKnotRect = function(type) {
@@ -488,11 +616,54 @@ Token.prototype.getKnotLeft = function(type) {
  */
 
 var TokenFactory = (function() {
+    var arrowHead = 'm 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z';
+    var arrowTail = '';
+    
+    // Private - Create all the buttons
+    
+    
+    // Private - Create all the knots
+    function createKnots(k) {
+        var svg_node = document.createElementNS('http://www.w3.org/2000/svg','g');
+            svg_node.setAttributeNS(null,'id','knots');
+            svg_node.setAttributeNS(null,'transform','rotate(0,500,500)');
 
+            for (var i=0; i < k.length; i++) {
+                if (k[i] === 'i') {
+                    var tmp = document.createElementNS('http://www.w3.org/2000/svg','path');
+                    var angle = 90*i;
+                    tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
+                    tmp.setAttributeNS(null,'d',arrowHead);
+                    tmp.setAttributeNS(null,'fill','#ffffff');
+                    tmp.setAttributeNS(null,'stroke','#000000');
+                    tmp.setAttributeNS(null,'stroke-width',18.0);
+                    tmp.setAttributeNS(null,'stroke-linejoin','round');
+                    svg_node.appendChild(tmp);
+                }
+                else if (k[i] === 'o') {
+                    var tmp = document.createElementNS('http://www.w3.org/2000/svg','rect');
+                    var angle = (90*i + 180)%360; // HACK
+                    tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
+                    tmp.setAttributeNS(null,'x',500.0 - 165/2.0);
+                    tmp.setAttributeNS(null,'y',9.0);
+                    tmp.setAttributeNS(null,'width',165);
+                    tmp.setAttributeNS(null,'height',128);
+                    tmp.setAttributeNS(null,'fill','#FFFFFF');
+                    tmp.setAttributeNS(null,'stroke','#000000');
+                    tmp.setAttributeNS(null,'stroke-width',18.0);
+                    svg_node.appendChild(tmp);
+                }
+            }
+        return svg_node;
+    }
     return {
-        get: function (options) {;
+        get: function (options) {
+        
+            // Create token depending of its type
             var tok = new Token(tokenIDs[options.type]);
             console.log(JSON.stringify(tok));
+            
+            /* Obsolete
             tok.html='<div class="token" id="'+tok.ID
                     +'" style="background:'+tok.background_color
                     +';" onmousedown="move(this,event)">';
@@ -521,13 +692,7 @@ var TokenFactory = (function() {
                         + 'src="'+tok.path_img+tok.background+'" onmousedown="return false;">';
             }
 
-            // Knot(s)
-            var _knots = tok.knots[0];
-            for (var i=0;i<4;i++) {
-                if (_knots[i] != 'x') {
-                  tok.html+='<img class="knot" id="'+ _knots[i].toLowerCase() + i + '_' + tok.ID + '" src="' + tok.path_img + tok.knots_img + '" onmousedown="return false;">';
-                }
-            }
+
 
             // Icon
             if (tok.clip === undefined) {
@@ -542,11 +707,16 @@ var TokenFactory = (function() {
                         + tok.clip_left+';clip:'+tok.clip+';" src="'+tok.path_img+tok.icon+'" onmousedown="return false;">';
             }
 
+            */
+            
+            // Create GUI 
+            
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttributeNS(null,'width', Game.TOKENSIZE);
             svg.setAttributeNS(null,'height', Game.TOKENSIZE);
             svg.setAttributeNS(null,'viewBox', '0 0 1000 1000');
-            svg.setAttributeNS(null,'class', 'token');
+            svg.setAttributeNS(null,'transform', 'matrix(1 0 0 1 0 0)');
+
             
             // Background
             var bckgd = document.createElementNS('http://www.w3.org/2000/svg','rect');
@@ -577,46 +747,19 @@ var TokenFactory = (function() {
             buttonNE.setAttributeNS(null,'r',105);
             buttonNE.setAttributeNS(null,'fill','#FF8000');
             buttonNE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+
+            buttonNE.addEventListener('click',
+                function(ev) {
+                    console.log(ev.target);
+                    var knots_layer = ev.target.parentNode.querySelector("#knots");
+                    var arr = knots_layer.getAttributeNS(null, "transform").slice(7,-1).split(',');
+                    arr[0] = (parseInt(arr[0])+90)%360;
+                    knots_layer.setAttributeNS(null,'transform','rotate('+arr.join(',')+')');
+                });
             svg.appendChild(buttonNE);
-           
-            // Knot(s)
-            var knots = document.createElementNS('http://www.w3.org/2000/svg','g');
-            knots.setAttributeNS(null,'id','knots');
-            knots.setAttributeNS(null,'transform','rotate(0,500,500)');
-            var outN = document.createElementNS('http://www.w3.org/2000/svg','rect');
-            outN.setAttributeNS(null,'x',500.0 - 165/2.0);
-            outN.setAttributeNS(null,'y',9.0);
-            outN.setAttributeNS(null,'width',165);
-            outN.setAttributeNS(null,'height',128);
-            outN.setAttributeNS(null,'fill','#FFFFFF');
-            outN.setAttributeNS(null,'stroke','#000000');
-            outN.setAttributeNS(null,'stroke-width',18.0);
-            knots.appendChild(outN);
-            var inS = document.createElementNS('http://www.w3.org/2000/svg','path');
-            inS.setAttributeNS(null,'d','m 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z');
-            inS.setAttributeNS(null,'fill','#ffffff');
-            inS.setAttributeNS(null,'stroke','#000000');
-            inS.setAttributeNS(null,'stroke-width',18.0);
-            inS.setAttributeNS(null,'stroke-linejoin','round');
-            knots.appendChild(inS);
-            var inE = document.createElementNS('http://www.w3.org/2000/svg','path');
-            inE.setAttributeNS(null,'d','m 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z');
-            inE.setAttributeNS(null,'transform','rotate(90,500,500)');
-            inE.setAttributeNS(null,'fill','#00ff00');
-            inE.setAttributeNS(null,'stroke','#000000');
-            inE.setAttributeNS(null,'stroke-width',18.0);
-            inE.setAttributeNS(null,'stroke-linejoin','round');
-            knots.appendChild(inE);
-            var inW = document.createElementNS('http://www.w3.org/2000/svg','path');
-            inW.setAttributeNS(null,'d','m 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z');
-            inW.setAttributeNS(null,'transform','rotate(-90,500,500)');
-            inW.setAttributeNS(null,'fill','#00ff00');
-            inW.setAttributeNS(null,'stroke','#000000');
-            inW.setAttributeNS(null,'stroke-width',18.0);
-            inW.setAttributeNS(null,'stroke-linejoin','round');
-            knots.appendChild(inW);
             
-            svg.appendChild(knots);
+            // Knot(s)
+            svg.appendChild(createKnots(tok.knots[0]) );
            
            // Icon
             var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);
@@ -636,8 +779,18 @@ var TokenFactory = (function() {
 
             svg.appendChild(primitive);
             
-                
-            tok.html=svg;
+            // Embed svg in a div for sake of convenience
+            var finalTok = document.createElement('div');
+            finalTok.setAttribute('title',tok.title);
+
+            var klass = 'token';
+            if ( (tok.props & Token.MOVABLE) === Token.MOVABLE) {
+                klass += ' draggable';
+            }
+            finalTok.setAttribute('class', klass);
+            finalTok.setAttribute('id', tok.name);
+            finalTok.appendChild(svg);
+            tok.html=finalTok;
             return tok;
         }
     }
@@ -744,9 +897,9 @@ var tokenIDs = {
      },
     'calcString'   : {
         "ID"     : "STRG_TOK",
-        "name"   :"calcString",
+        "name"   : "calcString",
         "comment": "Container of String Functions",
-        "props"  : ["CLOSABLE" , "LINKABLE" , "MOVABLE" , "CONTAINABLE" , "RENDERABLE" , "ROTATABLE"],
+        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi"],
         "title"  : "String Calculator",
         "input"  : "string",
@@ -929,11 +1082,11 @@ var tokenIDs = {
     },
     'hub'          :  {
          "ID"    : "HUB__TOK",
-        "name"   : "function",
-        "comment": "Function f(x)",
+        "name"   : "hub",
+        "comment": "Hub used to insert additional inputs in the flow",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Function f(x)",
+        "title"  : "Hub",
         "svg"    : {
             "type": "g",
             "data": {},
@@ -1026,11 +1179,11 @@ var tokenIDs = {
     },
     'input_cloud'  :  {
          "ID"    : "CLUD_TOK",
-        "name"   : "function",
-        "comment": "Function f(x)",
+        "name"   : "input_cloud",
+        "comment": "Input obtained from the cloud",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Function f(x)",
+        "title"  : "Input from the Cloud",
         "svg"    : {
             "type": "path",
             "data": {
@@ -1048,11 +1201,11 @@ var tokenIDs = {
     },
     'input_new'    : {
          "ID"    : "INEW_TOK",
-        "name"   : "function",
-        "comment": "Function f(x)",
+        "name"   : "input_new",
+        "comment": "Input with creation of a new variable from other input",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
         "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Function f(x)",
+        "title"  : "Input with Creation",
         "svg"    : {
             "type": "circle",
             "data": {"r": 200, "cx": 500, "cy": 500, "fill": "green"}
