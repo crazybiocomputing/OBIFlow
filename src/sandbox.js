@@ -68,6 +68,7 @@ SandBox.prototype.addTokens = function(toks) {
     
     this.tokens = tokSet.map(
         function(token) {
+            token.name = token.type + '_' + token.current;
             var myTok = TokenFactory.get(token);
             return {token: myTok, copies: token.copies};
         }
@@ -80,7 +81,7 @@ SandBox.prototype.init = function() {
     var self = this;
     // Update Sandbox
     var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
-    this.element.clientHeight = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
+    this.element.style.height = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
 
     this.tokens.forEach(
         function (tok,index,array) {
@@ -98,6 +99,25 @@ SandBox.prototype.init = function() {
     );
 };
 
+
+SandBox.prototype.refill = function(tok) {
+    var i = 0;
+    var len = this.tokens.length;
+    console.log('refill');
+    
+    while (i < len) {
+        console.log(i);
+        if (tok.type === this.tokens[i].token.type) {
+            this.tokens[i].current++;
+            console.log(JSON.stringify(this.tokens[i]));
+            // TODO
+            // Move tok to board - a copy??
+            // Refill sandbox with default token of the same type
+            //this.tokens.push({type: tok.type}TokenFactory.get(this.tokens[i].token));
+        }
+        i++;
+    }
+};
 
 SandBox.prototype.render = function() {
     var self = this;

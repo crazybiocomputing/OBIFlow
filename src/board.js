@@ -33,6 +33,11 @@ function Board(div_name,w,h) {
 
 }
 
+Board.prototype.getHTMLElement = function() {
+    return document.getElementById(this.name);
+};
+
+
 Board.prototype.setViewport = function (w,h) {
     this.viewport.w = w;
     this.viewport.h = h;

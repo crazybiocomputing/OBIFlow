@@ -25,6 +25,8 @@
 function Game(div_name) {
     this.name = div_name;
     this.components = [];
+    this.board;
+    this.sandbox;
 }
 
 Game.TOKENSIZE = 80;
@@ -35,6 +37,13 @@ Game.HOME_FLOW = function () {
 
 
 Game.prototype.add = function (component) {
+    if (component instanceof Board) {
+        this.board = component;
+    }
+    else if (component instanceof SandBox) {
+        this.sandbox = component;
+    }
+    
     this.components.push(component);
 }
 

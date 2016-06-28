@@ -22,10 +22,15 @@
  * Jean-Christophe Taveau
  */
  
+// Global
+
+var game;
+
+
 function init() {
 
     // Create game
-    var game = new Game('crazyworkflow');
+    game = new Game('crazyworkflow');
     
     // Create board
     var board = new Board('board',20,20);

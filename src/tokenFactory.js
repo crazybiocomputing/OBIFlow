@@ -67,7 +67,11 @@ var TokenFactory = (function() {
         get: function (options) {
         
             // Create token depending of its type
-            var tok = new Token(tokenIDs[options.type]);
+            var _options = tokenIDs[options.type];
+            for (var prop in options) {
+                _options[prop] = options[prop];
+            }
+            var tok = new Token(_options);
             console.log(JSON.stringify(tok));
             
             /* Obsolete
