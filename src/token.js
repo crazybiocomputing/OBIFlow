@@ -47,23 +47,6 @@ function Token(options) {
     this.angle = options.angle || 0; // Rotation angle of knot(s)
     this.nodes = options.nodes;
 
-
-    // Obsolete
-    // Images of various layers composing the token
-    // See svg
-    /*
-    this.background_color=options.background_color || '#FFFFFF';
-    this.path_img = Game.HOME_FLOW() +'/images/';
-    this.background=options.background || 'background_token.png';
-    this.knots_img = 'knots_row.png';
-    this.icon = options.icon || 'question_mark.png';
-    if (this.icon.indexOf("../crazybioflow/img/") != -1) {
-        // Backward compatibility
-        this.icon = this.icon.substring(20,this.icon.length);
-    }
-    this.clip=options.clip || 'undefined';
-    this.clip_left=options.clip_left || 0;
-    */
     
     // New ??
     this.svg = options.svg ||  {type: "circle",data: {"r": 50, "cx": 50, "cy": 50, "fill": "green"} };
@@ -168,7 +151,6 @@ Token.prototype.init = function() {
                 if (self.status === -1) {
                     self.status = 0;
                     // Update sandbox
-                    game.sandbox.refill(self);
                 }
                 else
                     game.board.cells[self.cell_x + game.board.width * self.cell_y] = 0;
@@ -177,12 +159,12 @@ Token.prototype.init = function() {
                 self.cell_y = cell_y;
                 game.board.cells[self.cell_x + game.board.width * self.cell_y] = self.ID;
                 
-                el.style.left = (viewportOffset.left + self.cell_x * Game.TOKENSIZE - 6) + 'px';
-                el.style.top  = (viewportOffset.top  + self.cell_y * Game.TOKENSIZE - 6) + 'px';
+                el.style.left = (self.cell_x * Game.TOKENSIZE) + 'px'; // viewportOffset.left + 
+                el.style.top  = (self.cell_y * Game.TOKENSIZE) + 'px'; // viewportOffset.top  + 
             }
             else {
-                el.style.left = (viewportOffset.left + self.cell_x * Game.TOKENSIZE - 6) + 'px';
-                el.style.top  = (viewportOffset.top  + self.cell_y * Game.TOKENSIZE - 6) + 'px';
+                el.style.left = (self.cell_x * Game.TOKENSIZE) + 'px';
+                el.style.top  = (self.cell_y * Game.TOKENSIZE) + 'px';
             }
             
 

@@ -30,6 +30,7 @@ function Board(div_name,w,h) {
     this.cells  = new Array(w * h);
     this.cells.fill(0);
     this.viewport = {w: w, h: h};
+    this.tokens = [];
 
 }
 
@@ -41,6 +42,20 @@ Board.prototype.getHTMLElement = function() {
 Board.prototype.setViewport = function (w,h) {
     this.viewport.w = w;
     this.viewport.h = h;
+}
+
+Board.prototype.addToken = function(options) {
+    var newTok = TokenFactory.get(options);
+    
+    newTok.cell_x = 0;
+    newTok.cell_y = 0;
+
+    document.getElementById(this.name).appendChild(newTok.html);
+
+    newTok.init();
+    this.tokens.push(newTok);
+    // Update sandbox
+    game.sandbox.refill(newTok);
 }
 
 Board.prototype.init = function () {

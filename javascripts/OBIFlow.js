@@ -30,6 +30,7 @@ function Board(div_name,w,h) {
     this.cells  = new Array(w * h);
     this.cells.fill(0);
     this.viewport = {w: w, h: h};
+    this.tokens = [];
 
 }
 
@@ -41,6 +42,20 @@ Board.prototype.getHTMLElement = function() {
 Board.prototype.setViewport = function (w,h) {
     this.viewport.w = w;
     this.viewport.h = h;
+}
+
+Board.prototype.addToken = function(options) {
+    var newTok = TokenFactory.get(options);
+    
+    newTok.cell_x = 0;
+    newTok.cell_y = 0;
+
+    document.getElementById(this.name).appendChild(newTok.html);
+
+    newTok.init();
+    this.tokens.push(newTok);
+    // Update sandbox
+    game.sandbox.refill(newTok);
 }
 
 Board.prototype.init = function () {
@@ -353,9 +368,8 @@ SandBox.prototype.addTokens = function(toks) {
     
     this.tokens = tokSet.map(
         function(token) {
-            token.name = token.type + '_' + token.current;
-            var myTok = TokenFactory.get(token);
-            return {token: myTok, copies: token.copies};
+            var myTok = TokenSandBoxFactory.get(token);
+            return {token: myTok, copies: token.copies, current: token.current};
         }
     );
 
@@ -365,8 +379,8 @@ SandBox.prototype.addTokens = function(toks) {
 SandBox.prototype.init = function() {
     var self = this;
     // Update Sandbox
-    var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
-    this.element.style.height = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
+    //var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
+    //this.element.style.height = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
 
     this.tokens.forEach(
         function (tok,index,array) {
@@ -374,12 +388,6 @@ SandBox.prototype.init = function() {
             console.log(self.element);
             self.element.appendChild(tok.token.html);
             tok.token.init();
-            
-            // Location in sandbox
-            var max_tokens_per_row = Math.floor(parseInt(self.element.clientWidth) / Game.TOKENSIZE);
-            console.log(max_tokens_per_row);
-            tok.token.getHTMLElement().style.left = (Game.TOKENSIZE * (index % max_tokens_per_row) ) + 'px';
-            tok.token.getHTMLElement().style.top  = (Game.TOKENSIZE * Math.floor(index / max_tokens_per_row) ) + 'px';
         }
     );
 };
@@ -394,6 +402,11 @@ SandBox.prototype.refill = function(tok) {
         console.log(i);
         if (tok.type === this.tokens[i].token.type) {
             this.tokens[i].current++;
+            this.tokens[i].copies--;
+            this.tokens[i].token.current++;
+            if (this.tokens[i].copies <= 0) {
+                this.tokens[i].token.getHTMLElement().style.display = 'none';
+            }
             console.log(JSON.stringify(this.tokens[i]));
             // TODO
             // Move tok to board - a copy??
@@ -467,23 +480,6 @@ function Token(options) {
     this.angle = options.angle || 0; // Rotation angle of knot(s)
     this.nodes = options.nodes;
 
-
-    // Obsolete
-    // Images of various layers composing the token
-    // See svg
-    /*
-    this.background_color=options.background_color || '#FFFFFF';
-    this.path_img = Game.HOME_FLOW() +'/images/';
-    this.background=options.background || 'background_token.png';
-    this.knots_img = 'knots_row.png';
-    this.icon = options.icon || 'question_mark.png';
-    if (this.icon.indexOf("../crazybioflow/img/") != -1) {
-        // Backward compatibility
-        this.icon = this.icon.substring(20,this.icon.length);
-    }
-    this.clip=options.clip || 'undefined';
-    this.clip_left=options.clip_left || 0;
-    */
     
     // New ??
     this.svg = options.svg ||  {type: "circle",data: {"r": 50, "cx": 50, "cy": 50, "fill": "green"} };
@@ -588,7 +584,6 @@ Token.prototype.init = function() {
                 if (self.status === -1) {
                     self.status = 0;
                     // Update sandbox
-                    game.sandbox.refill(self);
                 }
                 else
                     game.board.cells[self.cell_x + game.board.width * self.cell_y] = 0;
@@ -597,12 +592,12 @@ Token.prototype.init = function() {
                 self.cell_y = cell_y;
                 game.board.cells[self.cell_x + game.board.width * self.cell_y] = self.ID;
                 
-                el.style.left = (viewportOffset.left + self.cell_x * Game.TOKENSIZE - 6) + 'px';
-                el.style.top  = (viewportOffset.top  + self.cell_y * Game.TOKENSIZE - 6) + 'px';
+                el.style.left = (self.cell_x * Game.TOKENSIZE) + 'px'; // viewportOffset.left + 
+                el.style.top  = (self.cell_y * Game.TOKENSIZE) + 'px'; // viewportOffset.top  + 
             }
             else {
-                el.style.left = (viewportOffset.left + self.cell_x * Game.TOKENSIZE - 6) + 'px';
-                el.style.top  = (viewportOffset.top  + self.cell_y * Game.TOKENSIZE - 6) + 'px';
+                el.style.left = (self.cell_x * Game.TOKENSIZE) + 'px';
+                el.style.top  = (self.cell_y * Game.TOKENSIZE) + 'px';
             }
             
 
@@ -731,51 +726,6 @@ var TokenFactory = (function() {
             var tok = new Token(_options);
             console.log(JSON.stringify(tok));
             
-            /* Obsolete
-            tok.html='<div class="token" id="'+tok.ID
-                    +'" style="background:'+tok.background_color
-                    +';" onmousedown="move(this,event)">';
-
-            // Background + button(s)
-            if ( (tok.props & Token.CLOSABLE) && (tok.props & Token.ROTATABLE) ) {
-                console.log('closable? ' + tok.props.toString(2)+ ' ' + Token.CLOSABLE + ' ' + (tok.props & Token.CLOSABLE) );
-                tok.html+='<img src="'+tok.path_img+tok.background+'"'
-                        +' style="position:absolute;left:0px;clip:rect(0px '+tok.height+'px '+tok.height+'px 0px);"'
-                        +' onmousedown="return false;">';
-            }
-            else if ( (tok.props & Token.CLOSABLE) ) {
-                tok.html+='<img style="';
-                tok.html+='position:absolute;';
-                tok.html+='left:-'+tok.height+'px;clip:rect(0px '+(2*tok.height)+'px '+tok.height+'px '+tok.height+'px);"';
-                tok.html+='src="'+tok.path_img+tok.background+'" onmousedown="return false;">'
-            }
-            else if ( (tok.props & Token.ROTATABLE) ) {
-                tok.html+='<img style="position:absolute;left:-200px;clip:rect(0px '
-                        +(3*tok.height)+'px '+tok.height+'px '+(2*tok.height)+'px);" '
-                        +'src="'+tok.path_img+tok.background+'" onmousedown="return false;">';
-            }
-            else {
-                tok.html+='<img style="position:absolute;left:-300px;clip:rect(0px '
-                        + (4*tok.height)+'px '+tok.height+'px '+(3*tok.height)+'px);" '
-                        + 'src="'+tok.path_img+tok.background+'" onmousedown="return false;">';
-            }
-
-
-
-            // Icon
-            if (tok.clip === undefined) {
-                tok.html+='<img title="'+tok.title
-                        +'" style="display:block; position:absolute; top:0px; left:0px;" '
-                        +'src="'+tok.path_img+tok.icon+'" onmousedown="return false;">';
-            }
-                
-            else {
-               
-                tok.html+='<img title="'+tok.title+'" style="display:block; position:absolute; top:0px; left:'
-                        + tok.clip_left+';clip:'+tok.clip+';" src="'+tok.path_img+tok.icon+'" onmousedown="return false;">';
-            }
-
-            */
             
             // Create GUI 
             
@@ -859,6 +809,248 @@ var TokenFactory = (function() {
             finalTok.setAttribute('id', tok.name);
             finalTok.appendChild(svg);
             tok.html=finalTok;
+            return tok;
+        }
+    }
+
+})();
+
+/*
+ *  OBIFlow: Omics and Bioinformatics visual programming workflow
+ *  Copyright (C) 2016  Jean-Christophe Taveau.
+ *
+ *  This file is part of OBIFlow
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with mowgli.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Authors:
+ * Jean-Christophe Taveau
+ */
+
+function TokenSandBox(options) {
+    // Init
+    this.ID = options.ID || 'UNK__TOK';
+    this.type = options.type || 'unknown';
+    this.name = options.name || 'unknown';
+    this.current = options.current || 0;
+    this.description = options.description  || {title:'None',contents:''};
+    this.title = options.title || 'No title';
+
+    // Geometry and Board location
+    this.orgx = options.orgx || 0;
+    this.orgy = options.orgy || 0;
+    this.width = options.width || Game.TOKENSIZE;
+    this.height = options.height || Game.TOKENSIZE;
+    this.cell_x = (options.cell_x != undefined) ? options.cell_x : -1;
+    this.cell_y = (options.cell_y != undefined) ? options.cell_y : -1;
+    
+
+    // New ??
+    this.svg = options.svg ||  {type: "circle",data: {"r": 50, "cx": 50, "cy": 50, "fill": "green"} };
+
+    console.log('new Token '+this.ID+ ' '+this.cell_x+' '+this.cell_y+' '+this.props);
+}
+
+
+TokenSandBox.prototype.getHTMLElement = function() {
+    return document.getElementById(this.name);
+};
+
+
+TokenSandBox.prototype.init = function() {
+
+    var self = this;
+    var el = document.getElementById(self.name);
+
+    // Click to open popup
+    function click(ev) {
+        ev = ev || window.event;
+        console.log('click '+self.ID+' '+self.type);
+        
+        game.board.addToken({type: self.type,name: self.type+'_'+self.current});
+        
+        return false;
+    }
+
+
+
+
+    el.addEventListener("mouseup", 
+        function (ev) {
+            self.dragMode = false;
+            console.log('mouseup '+self.ID+' '+self.xStart+' ' + self.yStart +' '+ self.dragMode);
+            var el = document.getElementById(self.name);
+            el.style.zIndex = 1;
+            var viewportOffset = game.board.getHTMLElement().getBoundingClientRect();
+            // these are relative to the viewport
+
+            var cell_x = self.xStart - parseInt(viewportOffset.left);
+            var cell_y = self.yStart - parseInt(viewportOffset.top);
+
+            cell_x /= Game.TOKENSIZE;
+            cell_y /= Game.TOKENSIZE;
+            
+            // Clamp
+            cell_x = Math.min(Math.max(Math.floor(cell_x), 0.0), parseFloat(game.board.width - 1));
+            cell_y = Math.min(Math.max(Math.floor(cell_y), 0.0), parseFloat(game.board.height - 1));
+            
+            console.log('board ' + cell_x +' '+cell_y+' '+game.board.cells[cell_x + game.board.width * cell_y] );
+
+            if (game.board.cells[cell_x + game.board.width * cell_y] === 0) {    
+                // Update board and **this** token
+                if (self.status === -1) {
+                    self.status = 0;
+                    // Update sandbox
+                    game.sandbox.refill(self);
+                }
+                else
+                    game.board.cells[self.cell_x + game.board.width * self.cell_y] = 0;
+
+                self.cell_x = cell_x;
+                self.cell_y = cell_y;
+                game.board.cells[self.cell_x + game.board.width * self.cell_y] = self.ID;
+                
+                el.style.left = (viewportOffset.left + self.cell_x * Game.TOKENSIZE - 6) + 'px';
+                el.style.top  = (viewportOffset.top  + self.cell_y * Game.TOKENSIZE - 6) + 'px';
+            }
+            else {
+                el.style.left = (viewportOffset.left + self.cell_x * Game.TOKENSIZE - 6) + 'px';
+                el.style.top  = (viewportOffset.top  + self.cell_y * Game.TOKENSIZE - 6) + 'px';
+            }
+            
+
+            el.addEventListener('click',click);
+        },
+        false);
+        
+}
+
+
+
+
+/*
+ *  OBIFlow: Omics and Bioinformatics visual programming workflow
+ *  Copyright (C) 2016  Jean-Christophe Taveau.
+ *
+ *  This file is part of OBIFlow
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with mowgli.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Authors:
+ * Jean-Christophe Taveau
+ */
+
+var TokenSandBoxFactory = (function() {
+    
+    // Private - Create all the buttons
+    
+    
+    return {
+        get: function (options) {
+        
+            // Create token depending of its type
+            var _options = tokenIDs[options.type];
+            for (var prop in options) {
+                _options[prop] = options[prop];
+            }
+            var tok = new TokenSandBox(_options);
+            tok.name +='_sandbox';
+            
+            // Create GUI 
+            
+            var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttributeNS(null,'width', Game.TOKENSIZE);
+            svg.setAttributeNS(null,'height', Game.TOKENSIZE);
+            svg.setAttributeNS(null,'viewBox', '0 0 1000 1000');
+            svg.setAttributeNS(null,'transform', 'matrix(1 0 0 1 0 0)');
+            
+
+            
+            // Background
+            var bckgd = document.createElementNS('http://www.w3.org/2000/svg','rect');
+            bckgd.setAttributeNS(null,'x',9.0);
+            bckgd.setAttributeNS(null,'y',9.0);
+            bckgd.setAttributeNS(null,'width',982);
+            bckgd.setAttributeNS(null,'height',982);
+            bckgd.setAttributeNS(null,'rx',144.0);
+            bckgd.setAttributeNS(null,'ry',144.0);
+            bckgd.setAttributeNS(null,'fill','#FFFFFF');
+            bckgd.setAttributeNS(null,'stroke','#000000');
+            bckgd.setAttributeNS(null,'stroke-width',18.0);
+            
+            // Tooltip - Must be in first position
+            var title = document.createElementNS("http://www.w3.org/2000/svg","title")
+            title.textContent = tok.title;
+            bckgd.appendChild(title);
+            
+            svg.appendChild(bckgd);
+            
+            // Button(s)
+            var buttonNW = document.createElementNS('http://www.w3.org/2000/svg','circle');
+            buttonNW.setAttributeNS(null,'cx',150);
+            buttonNW.setAttributeNS(null,'cy',150);
+            buttonNW.setAttributeNS(null,'r',105);
+            buttonNW.setAttributeNS(null,'fill','#FF8000');
+            buttonNW.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+            svg.appendChild(buttonNW);
+            
+            var buttonNE = document.createElementNS('http://www.w3.org/2000/svg','circle');
+            buttonNE.setAttributeNS(null,'cx',850);
+            buttonNE.setAttributeNS(null,'cy',150);
+            buttonNE.setAttributeNS(null,'r',105);
+            buttonNE.setAttributeNS(null,'fill','#FF8000');
+            buttonNE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+            svg.appendChild(buttonNE);
+            
+           
+           // Icon
+            var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);
+            for (var prop in tok.svg.data) {
+                primitive.setAttributeNS(null,prop,tok.svg.data[prop]);
+            }
+
+            if (tok.svg.type === 'g') {
+                for (var sub=0; sub < tok.svg.children.length; sub++) {
+                    var subprimitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.children[sub].type);
+                    for (var prop in tok.svg.children[sub].data) {
+                        subprimitive.setAttributeNS(null,prop,tok.svg.children[sub].data[prop]);
+                    }
+                    primitive.appendChild(subprimitive);
+                }
+            }
+
+            svg.appendChild(primitive);
+            
+            // Embed svg in a div for sake of convenience
+
+
+            svg.setAttributeNS(null,'id', tok.name);
+            svg.setAttributeNS(null,'class', 'token_sandbox');
+            tok.html= svg; //finalTok;
             return tok;
         }
     }

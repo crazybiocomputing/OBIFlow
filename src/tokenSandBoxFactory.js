@@ -22,47 +22,11 @@
  * Jean-Christophe Taveau
  */
 
-var TokenFactory = (function() {
-    var arrowHead = 'm 574.38196,991.65854 0,-73.98298 71.64807,-0.55974 -146.02893,-105.54043 -146.02894,105.54043 71.64741,0.55974 0,73.98298 74.38153,-1.23443 z';
-    var arrowTail = '';
+var TokenSandBoxFactory = (function() {
     
     // Private - Create all the buttons
     
     
-    // Private - Create all the knots
-    function createKnots(k) {
-        var svg_node = document.createElementNS('http://www.w3.org/2000/svg','g');
-            svg_node.setAttributeNS(null,'id','knots');
-            svg_node.setAttributeNS(null,'transform','rotate(0,500,500)');
-
-            for (var i=0; i < k.length; i++) {
-                if (k[i] === 'i') {
-                    var tmp = document.createElementNS('http://www.w3.org/2000/svg','path');
-                    var angle = 90*i;
-                    tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
-                    tmp.setAttributeNS(null,'d',arrowHead);
-                    tmp.setAttributeNS(null,'fill','#ffffff');
-                    tmp.setAttributeNS(null,'stroke','#000000');
-                    tmp.setAttributeNS(null,'stroke-width',18.0);
-                    tmp.setAttributeNS(null,'stroke-linejoin','round');
-                    svg_node.appendChild(tmp);
-                }
-                else if (k[i] === 'o') {
-                    var tmp = document.createElementNS('http://www.w3.org/2000/svg','rect');
-                    var angle = (90*i + 180)%360; // HACK
-                    tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
-                    tmp.setAttributeNS(null,'x',500.0 - 165/2.0);
-                    tmp.setAttributeNS(null,'y',9.0);
-                    tmp.setAttributeNS(null,'width',165);
-                    tmp.setAttributeNS(null,'height',128);
-                    tmp.setAttributeNS(null,'fill','#FFFFFF');
-                    tmp.setAttributeNS(null,'stroke','#000000');
-                    tmp.setAttributeNS(null,'stroke-width',18.0);
-                    svg_node.appendChild(tmp);
-                }
-            }
-        return svg_node;
-    }
     return {
         get: function (options) {
         
@@ -71,9 +35,8 @@ var TokenFactory = (function() {
             for (var prop in options) {
                 _options[prop] = options[prop];
             }
-            var tok = new Token(_options);
-            console.log(JSON.stringify(tok));
-            
+            var tok = new TokenSandBox(_options);
+            tok.name +='_sandbox';
             
             // Create GUI 
             
@@ -82,6 +45,7 @@ var TokenFactory = (function() {
             svg.setAttributeNS(null,'height', Game.TOKENSIZE);
             svg.setAttributeNS(null,'viewBox', '0 0 1000 1000');
             svg.setAttributeNS(null,'transform', 'matrix(1 0 0 1 0 0)');
+            
 
             
             // Background
@@ -95,7 +59,12 @@ var TokenFactory = (function() {
             bckgd.setAttributeNS(null,'fill','#FFFFFF');
             bckgd.setAttributeNS(null,'stroke','#000000');
             bckgd.setAttributeNS(null,'stroke-width',18.0);
-
+            
+            // Tooltip - Must be in first position
+            var title = document.createElementNS("http://www.w3.org/2000/svg","title")
+            title.textContent = tok.title;
+            bckgd.appendChild(title);
+            
             svg.appendChild(bckgd);
             
             // Button(s)
@@ -113,19 +82,8 @@ var TokenFactory = (function() {
             buttonNE.setAttributeNS(null,'r',105);
             buttonNE.setAttributeNS(null,'fill','#FF8000');
             buttonNE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
-
-            buttonNE.addEventListener('click',
-                function(ev) {
-                    console.log(ev.target);
-                    var knots_layer = ev.target.parentNode.querySelector("#knots");
-                    var arr = knots_layer.getAttributeNS(null, "transform").slice(7,-1).split(',');
-                    arr[0] = (parseInt(arr[0])+90)%360;
-                    knots_layer.setAttributeNS(null,'transform','rotate('+arr.join(',')+')');
-                });
             svg.appendChild(buttonNE);
             
-            // Knot(s)
-            svg.appendChild(createKnots(tok.knots[0]) );
            
            // Icon
             var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);
@@ -146,17 +104,11 @@ var TokenFactory = (function() {
             svg.appendChild(primitive);
             
             // Embed svg in a div for sake of convenience
-            var finalTok = document.createElement('div');
-            finalTok.setAttribute('title',tok.title);
 
-            var klass = 'token';
-            if ( (tok.props & Token.MOVABLE) === Token.MOVABLE) {
-                klass += ' draggable';
-            }
-            finalTok.setAttribute('class', klass);
-            finalTok.setAttribute('id', tok.name);
-            finalTok.appendChild(svg);
-            tok.html=finalTok;
+
+            svg.setAttributeNS(null,'id', tok.name);
+            svg.setAttributeNS(null,'class', 'token_sandbox');
+            tok.html= svg; //finalTok;
             return tok;
         }
     }

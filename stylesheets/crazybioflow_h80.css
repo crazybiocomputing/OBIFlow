@@ -28,8 +28,11 @@ div.clear {
   position: relative;
 }
 
-.token {
+.token_sandbox {
   margin-right: 2px;
+}
+
+.token {
   position: absolute;
   z-index:1;
 }

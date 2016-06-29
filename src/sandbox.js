@@ -68,9 +68,8 @@ SandBox.prototype.addTokens = function(toks) {
     
     this.tokens = tokSet.map(
         function(token) {
-            token.name = token.type + '_' + token.current;
-            var myTok = TokenFactory.get(token);
-            return {token: myTok, copies: token.copies};
+            var myTok = TokenSandBoxFactory.get(token);
+            return {token: myTok, copies: token.copies, current: token.current};
         }
     );
 
@@ -80,8 +79,8 @@ SandBox.prototype.addTokens = function(toks) {
 SandBox.prototype.init = function() {
     var self = this;
     // Update Sandbox
-    var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
-    this.element.style.height = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
+    //var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
+    //this.element.style.height = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
 
     this.tokens.forEach(
         function (tok,index,array) {
@@ -89,12 +88,6 @@ SandBox.prototype.init = function() {
             console.log(self.element);
             self.element.appendChild(tok.token.html);
             tok.token.init();
-            
-            // Location in sandbox
-            var max_tokens_per_row = Math.floor(parseInt(self.element.clientWidth) / Game.TOKENSIZE);
-            console.log(max_tokens_per_row);
-            tok.token.getHTMLElement().style.left = (Game.TOKENSIZE * (index % max_tokens_per_row) ) + 'px';
-            tok.token.getHTMLElement().style.top  = (Game.TOKENSIZE * Math.floor(index / max_tokens_per_row) ) + 'px';
         }
     );
 };
@@ -109,6 +102,11 @@ SandBox.prototype.refill = function(tok) {
         console.log(i);
         if (tok.type === this.tokens[i].token.type) {
             this.tokens[i].current++;
+            this.tokens[i].copies--;
+            this.tokens[i].token.current++;
+            if (this.tokens[i].copies <= 0) {
+                this.tokens[i].token.getHTMLElement().style.display = 'none';
+            }
             console.log(JSON.stringify(this.tokens[i]));
             // TODO
             // Move tok to board - a copy??
