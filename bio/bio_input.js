@@ -40,7 +40,7 @@ Input.prototype.wordcount = function(settings) {
 
 
 Input.prototype.hydropathy = function(settings){
-    var halfWindow = settings.halfWindow;
+    var halfWindow = settings[slidingWindow]/2;
     var result = (' '.repeat(halfWindow) + sequence.data + ' '.repeat(halfWindow))
         .toLowerCase()
         .split('')                                                     // <- Convert {string} into {array}
