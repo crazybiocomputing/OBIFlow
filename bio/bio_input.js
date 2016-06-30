@@ -38,4 +38,22 @@ Input.prototype.wordcount = function(settings) {
     return Input.of(result);
 }
 
+
+Input.prototype.hydropathy = function(sequence, halfWindow){
+    var result = (' '.repeat(halfWindow) + sequence.data + ' '.repeat(halfWindow))
+        .toLowerCase()
+        .split('')                                                     // <- Convert {string} into {array}
+        .map(
+            (x,i,array) => array.slice(i-halfWindow,i+1+halfWindow)
+        )
+        .filter(
+            (x) => ((x.length === slidingWindow) ? true : false)                // Only get arrays of length window
+        )
+        .map(
+//            (x) => x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) 
+            (x) => [x[5],x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) / slidingWindow ]
+        );
+    return Input.of(result);
+}
+
  
