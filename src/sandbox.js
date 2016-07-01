@@ -46,10 +46,11 @@ SandBox.allTokens = [
     {type: 'function'     , copies: 10, current: 0},
     {type: 'hub'          , copies: 10, current: 0},
     {type: 'if_then_else' , copies: 10, current: 0},
-    {type: 'input_ro'     , copies: 10, current: 0},
-    {type: 'input_rw'     , copies: 10, current: 0},
     {type: 'input_cloud'  , copies: 10, current: 0},
     {type: 'input_new'    , copies: 10, current: 0},
+    {type: 'input_ro'     , copies: 10, current: 0},
+    {type: 'input_rw'     , copies: 10, current: 0},
+    {type: 'input_start'  , copies: 1 , current: 0},
     {type: 'map'          , copies: 10, current: 0},
     {type: 'return_filter', copies: 10, current: 0},
     {type: 'return_fold'  , copies: 10, current: 0},
@@ -78,9 +79,6 @@ SandBox.prototype.addTokens = function(toks) {
 
 SandBox.prototype.init = function() {
     var self = this;
-    // Update Sandbox
-    //var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
-    //this.element.style.height = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
 
     this.tokens.forEach(
         function (tok,index,array) {

@@ -2,12 +2,24 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    babel: {
+        options: {
+            sourceMap: true,
+            presets: ['es2015']
+        },
+        dist: {
+            files: {
+                'javascripts/<%= pkg.name %>_js5.js': 'javascripts/<%= pkg.name %>.js'
+            }
+        }
+    },
+
     uglify: {
         options: {
             banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
         },
         build: {
-            src:  'javascripts/<%= pkg.name %>.js',
+            src:  'javascripts/<%= pkg.name %>_js5.js',
             dest: 'javascripts/<%= pkg.name %>.min.js'
         }
     },
@@ -53,15 +65,17 @@ module.exports = function(grunt) {
         }
     }
   });
+  
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jade');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-babel');
   
   // Default and other tasks.
-  grunt.registerTask('default',['concat','uglify']);
+  grunt.registerTask('default',['concat','babel','uglify']);
   grunt.registerTask('views','Convert Jade templates into html templates', ['jade']);
 };
 

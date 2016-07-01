@@ -29,7 +29,7 @@ var tokenIDs = {
         "name"   :"calcArray",
         "comment": "Container of Array Functions",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "Array Calculator",
         "input"  : "number",
         "output" : "number",
@@ -51,7 +51,7 @@ var tokenIDs = {
         "name"   :"calcNumber",
         "comment": "Container of arithmetic Functions",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "Calculator",
         "input"  : "number",
         "output" : "number",
@@ -101,7 +101,7 @@ var tokenIDs = {
         "name"   : "calcString",
         "comment": "Container of String Functions",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "String Calculator",
         "input"  : "string",
         "output" : "any",
@@ -214,6 +214,14 @@ var tokenIDs = {
                 "output" : "[string]",
                 "args": ["regex"]
             },
+            {
+                "name": "repeat",
+                "args": ["number"],
+                "comment": "Returns string with the same repeated pattern",
+                "input"  : "string",
+                "output" : "string",
+                "args": ["regex"]
+            },
         ]
      },
     'database'     :  {
@@ -243,7 +251,7 @@ var tokenIDs = {
         "name"   : "filter",
         "comment": "Filter Function",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","oxoi","oixo"],
         "title"  : "Filter",
         "svg"    : {
             "type": "path",
@@ -257,7 +265,7 @@ var tokenIDs = {
         "name"   : "fold",
         "comment": "Fold/Reduce Function",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","oxoi","oixo"],
         "title"  : "Fold/Reduce",
         "svg"    : {
             "type": "path",
@@ -274,7 +282,7 @@ var tokenIDs = {
         "name"   : "function",
         "comment": "Function f(x)",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "Function f(x)",
         "svg"    : {
             "type": "circle",
@@ -286,7 +294,7 @@ var tokenIDs = {
         "name"   : "hub",
         "comment": "Hub used to insert additional inputs in the flow",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
+        "knots"  : ["oxix","oixx","oxxi","oxii","oixi","oiii"],
         "title"  : "Hub",
         "svg"    : {
             "type": "g",
@@ -305,7 +313,7 @@ var tokenIDs = {
         "name"   : "if_then_else",
         "comment": "if_then_else works as a predicate: a function returning a boolean (true or false)",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","ooxi"],
         "title"  : "IF (condition) THEN return true ELSE return false",
         "input"  : "any",
         "output" : "boolean",
@@ -326,16 +334,58 @@ var tokenIDs = {
                 "0,9.1485 6.51473,15.66342 6.51536,6.51479 15.6643,6.51479 z m 301.62297,243.96033 q 0,20.23763 -12.89105,36.31684 -12.89106,16.07922 "+
                 "-32.57429,25.22771 -19.68261,9.14856 -40.05916,13.72278 -20.37654,4.57428 -38.67316,4.57428 -18.29724,0 -38.67379,-4.57428 "+
                 "-20.37591,-4.57422 -40.05915,-13.72278 -19.6826,-9.14849 -32.57366,-25.22771 -12.89168,-16.07921 -12.89168,-36.31684 0,-3.0495 "+
-                "9.70321,-22.45541 9.70321,-19.40591 25.50528,-48.37624 15.80145,-28.97034 29.66327,-54.19805 13.86118,-25.22764 28.27664,-51.00988 14.41608,-25.78217 15.52526,-27.72274 4.99033,-9.1485 15.52462,-9.1485 10.53494,0 15.52463,9.1485 1.10918,1.94057 15.52526,27.72274 14.41546,25.78224 28.27664,51.00988 13.86119,25.22771 29.6639,54.19805 15.80144,28.97033 25.50465,48.37624 9.70258,19.40591 9.70258,22.45541 z m -354.85126,0 q 0,20.23763 -12.89105,36.31684 -12.89042,16.07922 -32.57429,25.22771 -19.6826,9.14856 -40.05915,13.72278 -20.37655,4.57428 -38.67316,4.57428 -18.29725,0 -38.6738,-4.57428 -20.37528,-4.57422 -40.05915,-13.72278 -19.6826,-9.14849 -32.57429,-25.22771 -12.89105,-16.07921 -12.89105,-36.31684 0,-3.0495 9.70257,-22.45541 9.70321,-19.40591 25.50529,-48.37624 15.80208,-28.97034 29.66327,-54.19805 13.86182,-25.22764 28.2779,-51.00988 14.41546,-25.78217 15.524,-27.72274 4.98969,-9.1485 15.52526,-9.1485 10.53493,0 15.52463,9.1485 1.10917,1.94057 15.52462,27.72274 14.41546,25.78224 28.27728,51.00988 13.86118,25.22771 29.66326,54.19805 15.80208,28.97033 25.50529,48.37624 9.70257,19.40591 9.70257,22.45541 z"
+                "9.70321,-22.45541 9.70321,-19.40591 25.50528,-48.37624 15.80145,-28.97034 29.66327,-54.19805 13.86118,-25.22764 28.27664,-51.00988 "+
+                "14.41608,-25.78217 15.52526,-27.72274 4.99033,-9.1485 15.52462,-9.1485 10.53494,0 15.52463,9.1485 1.10918,1.94057 15.52526,27.72274 "+
+                "14.41546,25.78224 28.27664,51.00988 13.86119,25.22771 29.6639,54.19805 15.80144,28.97033 25.50465,48.37624 9.70258,19.40591 9.70258,22.45541 z"+
+                " m -354.85126,0 q 0,20.23763 -12.89105,36.31684 -12.89042,16.07922 -32.57429,25.22771 -19.6826,9.14856 -40.05915,13.72278 "+
+                "-20.37655,4.57428 -38.67316,4.57428 -18.29725,0 -38.6738,-4.57428 -20.37528,-4.57422 -40.05915,-13.72278 -19.6826,-9.14849 "+
+                "-32.57429,-25.22771 -12.89105,-16.07921 -12.89105,-36.31684 0,-3.0495 9.70257,-22.45541 9.70321,-19.40591 25.50529,-48.37624 "+
+                "15.80208,-28.97034 29.66327,-54.19805 13.86182,-25.22764 28.2779,-51.00988 14.41546,-25.78217 15.524,-27.72274 4.98969,-9.1485 "+
+                "15.52526,-9.1485 10.53493,0 15.52463,9.1485 1.10917,1.94057 15.52462,27.72274 14.41546,25.78224 28.27728,51.00988 13.86118,25.22771 "+
+                "29.66326,54.19805 15.80208,28.97033 25.50529,48.37624 9.70257,19.40591 9.70257,22.45541 z"
             }
         },
     },
-    'input_ro'     :  {
+    'input_cloud'  :  {
+         "ID"    : "CLUD_TOK",
+        "name"   : "input_cloud",
+        "comment": "Input obtained from the cloud",
+        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
+        "knots"  : ["oxxx"],
+        "title"  : "Input from the Cloud",
+        "svg"    : {
+            "type": "path",
+            "data": {
+                "d": "m 598.96942,529.62308 q 0,-4.37584 -2.81303,-7.18887 -2.81304,-2.81303 -7.18887,-2.81303 H 518.95427 V 409.60035 q 0,-4.06327 "+
+                "-2.96931,-7.03258 -2.96931,-2.96931 -7.03258,-2.96931 h -60.01136 q -4.06327,0 -7.03258,2.96931 -2.96932,2.96931 -2.96932,7.03258 "+
+                "v 110.02083 h -70.01325 q -4.06327,0 -7.03258,2.96932 -2.96931,2.9693 -2.96931,7.03258 0,4.37582 2.81303,7.18885 l 110.02082,110.02082 "+
+                "q 2.81304,2.81303 7.18887,2.81303 4.37583,0 7.18886,-2.81303 L 595.84383,537.12449 q 3.12559,-3.75071 3.12559,-7.50141 z m 200.03788,70.01324 "+
+                "q 0,49.6969 -35.16291,84.85981 -35.16291,35.16291 -84.85982,35.16291 H 338.92019 q -57.82345,0 -98.92498,-41.10154 -41.10153,-41.10153 "+
+                "-41.10153,-98.92496 0,-40.63269 21.87914,-75.0142 21.87914,-34.38151 58.76112,-51.57226 -0.62512,-9.37678 -0.62512,-13.44004 0,-66.26255"+
+                " 46.88388,-113.14643 46.88388,-46.88388 113.14642,-46.88388 48.75923,0 89.23565,27.19265 40.47641,27.19265 58.9174,72.20117 22.1917,-19.37867"+
+                " 51.88482,-19.37867 33.13129,0 56.57322,23.44194 23.44194,23.44194 23.44194,56.57322 0,23.75449 -12.81493,43.13316 40.6327,9.68933 "+
+                "66.73139,42.35177 26.09869,32.66243 26.09869,74.54535 z"
+            }
+        },
+    },
+    'input_new'  : {
+         "ID"    : "INEW_TOK",
+        "name"   : "input_new",
+        "comment": "Input with creation of a new variable from other input",
+        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
+        "knots"  : ["xoxi","oxix","oixx","oxxi"],
+        "title"  : "Input with Creation",
+        "svg"    : {
+            "type": "circle",
+            "data": {"r": 200, "cx": 500, "cy": 500, "fill": "green"}
+        },
+    },
+    'input_ro'   :  {
          "ID"    : "INRO_TOK",
         "name"   : "input_ro",
         "comment": "Input Read Only",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxx"],
+        "knots"  : ["oxxx"],
         "title"  : "Input Read Only",
         "svg"    : {
             "type": "path",
@@ -350,12 +400,12 @@ var tokenIDs = {
             }
         },
     },
-    'input_rw'     :  {
+    'input_rw'   :  {
          "ID"    : "INRW_TOK",
         "name"   : "input_rw",
         "comment": "Input Read/Write",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxx"],
+        "knots"  : ["oxxx"],
         "title"  : "Input Read/Write",
         "svg"    : {
             "type": "path",
@@ -378,38 +428,18 @@ var tokenIDs = {
             }
         },
     },
-    'input_cloud'  :  {
-         "ID"    : "CLUD_TOK",
-        "name"   : "input_cloud",
-        "comment": "Input obtained from the cloud",
+    'input_start'     :  {
+         "ID"    : "INST_TOK",
+        "name"   : "input_start",
+        "comment": "Input starting the processing main flow",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Input from the Cloud",
+        "knots"  : ["oxxx"],
+        "title"  : "Input Start",
         "svg"    : {
             "type": "path",
             "data": {
-                "d": "m 598.96942,529.62308 q 0,-4.37584 -2.81303,-7.18887 -2.81304,-2.81303 -7.18887,-2.81303 H 518.95427 V 409.60035 q 0,-4.06327 "+
-                "-2.96931,-7.03258 -2.96931,-2.96931 -7.03258,-2.96931 h -60.01136 q -4.06327,0 -7.03258,2.96931 -2.96932,2.96931 -2.96932,7.03258 "+
-                "v 110.02083 h -70.01325 q -4.06327,0 -7.03258,2.96932 -2.96931,2.9693 -2.96931,7.03258 0,4.37582 2.81303,7.18885 l 110.02082,110.02082 "+
-                "q 2.81304,2.81303 7.18887,2.81303 4.37583,0 7.18886,-2.81303 L 595.84383,537.12449 q 3.12559,-3.75071 3.12559,-7.50141 z m 200.03788,70.01324 "+
-                "q 0,49.6969 -35.16291,84.85981 -35.16291,35.16291 -84.85982,35.16291 H 338.92019 q -57.82345,0 -98.92498,-41.10154 -41.10153,-41.10153 "+
-                "-41.10153,-98.92496 0,-40.63269 21.87914,-75.0142 21.87914,-34.38151 58.76112,-51.57226 -0.62512,-9.37678 -0.62512,-13.44004 0,-66.26255"+
-                " 46.88388,-113.14643 46.88388,-46.88388 113.14642,-46.88388 48.75923,0 89.23565,27.19265 40.47641,27.19265 58.9174,72.20117 22.1917,-19.37867"+
-                " 51.88482,-19.37867 33.13129,0 56.57322,23.44194 23.44194,23.44194 23.44194,56.57322 0,23.75449 -12.81493,43.13316 40.6327,9.68933 "+
-                "66.73139,42.35177 26.09869,32.66243 26.09869,74.54535 z"
+                "d":"m 314.0625,721.25 0,12 346.875,0 0,-12 -346.875,0 z m 61.71875,-96 0,12 285.15625,0 0,-12 -285.15625,0 z m -61.71875,64 0,12 346.875,0 0,-12 -346.875,0 z m 62.5,-96 0,12 284.375,0 0,-12 -284.375,0 z m -0.375,64 0,12 284.75,0 0,-12 -284.75,0 z M 348.25,355.3125 q 0,15.75 -14,24.0625 v 276.9375 q 0,2.84375 -2.07812,4.92188 -2.07813,2.07812 -4.92188,2.07812 h -14 q -2.84375,0 -4.92187,-2.07812 Q 306.25,659.15625 306.25,656.3125 V 379.375 q -14,-8.3125 -14,-24.0625 0,-11.59375 8.20313,-19.79687 8.20312,-8.20313 19.79687,-8.20313 11.59375,0 19.79687,8.20313 8.20313,8.20312 8.20313,19.79687 z m 322,14 v 166.90625 q 0,5.46875 -2.73438,8.42188 -2.73437,2.95312 -8.64062,6.01562 -47.03125,25.375 -80.71875,25.375 -13.34375,0 -27.01563,-4.8125 -13.67187,-4.8125 -23.73437,-10.5 -10.0625,-5.6875 -25.26562,-10.5 -15.20313,-4.8125 -31.17188,-4.8125 -42,0 -101.5,31.9375 -3.71875,1.96875 -7.21875,1.96875 -5.6875,0 -9.84375,-4.15625 Q 348.25,571 348.25,565.3125 V 403 q 0,-7 6.78125,-12.03125 4.59375,-3.0625 17.28125,-9.40625 51.625,-26.25 92.09375,-26.25 23.40625,0 43.75,6.34375 20.34375,6.34375 47.90625,19.25 8.3125,4.15625 19.25,4.15625 11.8125,0 25.70313,-4.59375 13.89062,-4.59375 24.0625,-10.28125 10.17187,-5.6875 19.25,-10.28125 9.07812,-4.59375 11.92187,-4.59375 5.6875,0 9.84375,4.15625 4.15625,4.15625 4.15625,9.84375 z M 252.1875,203.875 a 9.0009,9.0009 0 0 0 -9,8.96875 L 241.90625,814.375 a 9.0009,9.0009 0 0 0 9,9 l 485.03125,0 a 9.0009,9.0009 0 0 0 9,-9 l 0,-472.625 a 9.0009,9.0009 0 0 0 -2.34375,-6.03125 l -116.6875,-128.4375 a 9.0009,9.0009 0 0 0 -6.625,-2.9375 L 252.1875,203.875 z m 8.96875,18 354.09375,0.46875 111.6875,122.875 0,460.15625 -467,0 1.21875,-583.5 z"
             }
-        },
-    },
-    'input_new'    : {
-         "ID"    : "INEW_TOK",
-        "name"   : "input_new",
-        "comment": "Input with creation of a new variable from other input",
-        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Input with Creation",
-        "svg"    : {
-            "type": "circle",
-            "data": {"r": 200, "cx": 500, "cy": 500, "fill": "green"}
         },
     },
     'map'          : {
@@ -417,7 +447,7 @@ var tokenIDs = {
         "name"   : "map",
         "comment": "Map Function",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","oxoi","oixo"],
         "title"  : "Map Function",
         "input"  : "[any]",
         "output" : "[any]",
@@ -492,7 +522,7 @@ var tokenIDs = {
         "name"   : "settings",
         "comment": "Settings used by some tool",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxx"],
+        "knots"  : ["oxxx"],
         "title"  : "Settings",
         "svg"    : {
             "type": "circle",
@@ -504,7 +534,7 @@ var tokenIDs = {
         "name"   : "search",
         "comment": "Search. Accepts a Regex as argument",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
+        "knots"  : ["xoxi","oxix","oixx","oxxi"],
         "title"  : "Search",
         "svg"    : {
             "type": "path",
@@ -518,7 +548,7 @@ var tokenIDs = {
         "name"   : "view",
         "comment": "-",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xxix"],
+        "knots"  : ["ixxx"],
         "title"  : "View",
         "input"  : "any",
         "output" : "none",
@@ -605,7 +635,7 @@ var tokenIDs = {
         "name"   :"plot",
         "comment": "-",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xxix"],
+        "knots"  : ["ixxx"],
         "title"  : "Plot",
         "input"  : "any",
         "output" : "none",

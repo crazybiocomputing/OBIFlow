@@ -38,7 +38,7 @@ var TokenFactory = (function() {
             for (var i=0; i < k.length; i++) {
                 if (k[i] === 'i') {
                     var tmp = document.createElementNS('http://www.w3.org/2000/svg','path');
-                    var angle = 90*i;
+                    var angle = (180 + 90*i) % 360;
                     tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
                     tmp.setAttributeNS(null,'d',arrowHead);
                     tmp.setAttributeNS(null,'fill','#ffffff');
@@ -49,11 +49,11 @@ var TokenFactory = (function() {
                 }
                 else if (k[i] === 'o') {
                     var tmp = document.createElementNS('http://www.w3.org/2000/svg','rect');
-                    var angle = (90*i + 180)%360; // HACK
+                    var angle = 90*i; 
                     tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
-                    tmp.setAttributeNS(null,'x',500.0 - 165/2.0);
+                    tmp.setAttributeNS(null,'x',500.0 - 150/2.0);
                     tmp.setAttributeNS(null,'y',9.0);
-                    tmp.setAttributeNS(null,'width',165);
+                    tmp.setAttributeNS(null,'width',150);
                     tmp.setAttributeNS(null,'height',128);
                     tmp.setAttributeNS(null,'fill','#FFFFFF');
                     tmp.setAttributeNS(null,'stroke','#000000');
@@ -73,7 +73,7 @@ var TokenFactory = (function() {
             }
             var tok = new Token(_options);
             console.log(JSON.stringify(tok));
-            
+            tok.currentKnots = tok.knots[0];
             
             // Create GUI 
             
@@ -119,13 +119,37 @@ var TokenFactory = (function() {
                     console.log(ev.target);
                     var knots_layer = ev.target.parentNode.querySelector("#knots");
                     var arr = knots_layer.getAttributeNS(null, "transform").slice(7,-1).split(',');
+                    // Permutation
+                    tok.currentKnots = tok.currentKnots[3] + tok.currentKnots.substr(0,3);
+                    
                     arr[0] = (parseInt(arr[0])+90)%360;
                     knots_layer.setAttributeNS(null,'transform','rotate('+arr.join(',')+')');
                 });
             svg.appendChild(buttonNE);
             
+            if (tok.knots.length > 1) {
+                var buttonSW = document.createElementNS('http://www.w3.org/2000/svg','circle');
+                buttonSW.setAttributeNS(null,'class','settings');
+                buttonSW.setAttributeNS(null,'cx',150);
+                buttonSW.setAttributeNS(null,'cy',850);
+                buttonSW.setAttributeNS(null,'r',105);
+                buttonSW.setAttributeNS(null,'fill','#FF8000');
+                buttonSW.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+                svg.appendChild(buttonSW);
+            }
+
+/*
+            var buttonSE = document.createElementNS('http://www.w3.org/2000/svg','circle');
+            buttonSE.setAttributeNS(null,'cx',850);
+            buttonSE.setAttributeNS(null,'cy',850);
+            buttonSE.setAttributeNS(null,'r',105);
+            buttonSE.setAttributeNS(null,'fill','#FF8000');
+            buttonSE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+            svg.appendChild(buttonSE);
+*/
+            
             // Knot(s)
-            svg.appendChild(createKnots(tok.knots[0]) );
+            svg.appendChild(createKnots(tok.currentKnots) );
            
            // Icon
             var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);

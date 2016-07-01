@@ -172,6 +172,42 @@ Token.prototype.init = function() {
         },
         false);
         
+        // Settings buttonSW
+        var xy = {
+            'oixx' : '0px',
+            'oxix' : '-80px',
+            'oxxi' : '-160px',
+            'ooxi' : '-240px',
+            'oxoi' : '-320px',
+            'oxii' : '-400px',
+            'oixi' : '-480px',
+            'oooi' : '-540px',
+            'oiii' : '-640px'
+        }
+        var settings = document.querySelector('#'+self.name +' .settings');
+        if (settings !== null) {
+            settings.addEventListener(
+                'click',
+                function (ev) {
+                    document.getElementById('popup').style.display = 'inline-block';
+                    document.querySelector('#popup #title').innerHTML = 'Settings';
+                    var content = document.querySelector('#popup .contents');
+
+                    var str = self.knots.reduce(
+                        function (accu,k) {
+                            accu += '<li><a style="float:left" "href="#">'+ k +
+                                '<div class="crop"><img style="position:absolute;left:'+ xy[k] +
+                                '" src="../images/knotSettings.png"></div></a></li>';
+                            return accu;
+                        },
+                        '<ul>'
+                    )
+                    content.innerHTML = str;
+                },
+                false
+            );
+        }
+
 }
 
 

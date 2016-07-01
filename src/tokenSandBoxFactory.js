@@ -38,16 +38,13 @@ var TokenSandBoxFactory = (function() {
             var tok = new TokenSandBox(_options);
             tok.name +='_sandbox';
             
-            // Create GUI 
-            
+            // Create GUI  
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttributeNS(null,'width', Game.TOKENSIZE);
             svg.setAttributeNS(null,'height', Game.TOKENSIZE);
             svg.setAttributeNS(null,'viewBox', '0 0 1000 1000');
             svg.setAttributeNS(null,'transform', 'matrix(1 0 0 1 0 0)');
-            
 
-            
             // Background
             var bckgd = document.createElementNS('http://www.w3.org/2000/svg','rect');
             bckgd.setAttributeNS(null,'x',9.0);
@@ -68,6 +65,7 @@ var TokenSandBoxFactory = (function() {
             svg.appendChild(bckgd);
             
             // Button(s)
+            /*
             var buttonNW = document.createElementNS('http://www.w3.org/2000/svg','circle');
             buttonNW.setAttributeNS(null,'cx',150);
             buttonNW.setAttributeNS(null,'cy',150);
@@ -83,7 +81,7 @@ var TokenSandBoxFactory = (function() {
             buttonNE.setAttributeNS(null,'fill','#FF8000');
             buttonNE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
             svg.appendChild(buttonNE);
-            
+            */
            
            // Icon
             var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);

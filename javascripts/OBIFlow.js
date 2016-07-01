@@ -22,6 +22,203 @@
  * Jean-Christophe Taveau
  */
 
+
+(function(exports) {
+
+    function Input(x) {
+        this.__value = x;
+    }
+
+    Input.of = function(data) {
+        return new Input(data);
+    }
+
+    /**
+     * log :: Display results in console
+     *
+     */
+    Input.prototype.log = function() {
+        console.log(JSON.stringify(this.__value) );
+    }
+
+    /**
+     * map :: Obj -> Obj
+     *
+     */
+    Input.prototype.map = function(func) {
+        return Input.of(func(this.__value));
+    }
+
+    /**
+     * split :: String -> [String]
+     *
+     */
+    Input.prototype.split = function(separator) {
+        var result = {title: this.__value.title};
+        result.data = this.__value.data.split(separator);
+        return Input.of(result);
+    }
+    
+    /**
+     * splitWord :: String -> [String]
+     *
+     */
+    Input.prototype.splitWord = function(length) {
+        var result = {title: this.__value.title};
+        var regex = new RegExp('.{'+length+'}','g');
+        result.data = this.__value.data.match(regex);
+        
+        return Input.of(result);
+    }
+    
+
+    /**
+     * toLowerCase :: String -> String
+     *
+     */
+    Input.prototype.toLowerCase = function() {
+        var result = {title: this.__value.title};
+        result.data = this.__value.data.toLowerCase();
+        return new Input(result);
+    }
+
+
+    /**
+     *
+     * E M B O S S 
+     *
+     */
+
+
+    Input.prototype.hydropathy = function(settings){
+        var halfWindow = settings[slidingWindow]/2;
+        var result = (' '.repeat(halfWindow) + this.__value.data + ' '.repeat(halfWindow))
+            .toLowerCase()
+            .split('')                                                     // <- Convert {string} into {array}
+            .map(
+                (x,i,array) => array.slice(i-halfWindow,i+1+halfWindow)
+            )
+            .filter(
+                (x) => ((x.length === slidingWindow) ? true : false)                // Only get arrays of length window
+            )
+            .map(
+    //            (x) => x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) 
+                (x) => [x[5],x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) / slidingWindow ]
+            );
+        return Input.of(result);
+    }
+
+
+    Input.prototype.threeToOne = function() {
+        var result = {title: this.__value.title} 
+        result.data = this.__value.data
+            .map(
+                (x) => BIO.alphabet.amino[x]
+            );
+            
+        return Input.of(result);
+    }
+
+    Input.prototype.wordcount = function(settings) {
+        // settings.word_length
+        // TODO
+        return Input.of(this.__value);
+    }
+
+
+
+
+
+    exports.Input = Input;
+    
+})(this.BIO = this.BIO || {} );
+
+
+
+/*
+ *  OBIFlow: Omics and Bioinformatics visual programming workflow
+ *  Copyright (C) 2016  Jean-Christophe Taveau.
+ *
+ *  This file is part of OBIFlow
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with mowgli.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Authors:
+ * Jean-Christophe Taveau
+ */
+
+
+var BIO = BIO || {};
+
+BIO.alphabet = {};
+
+BIO.alphabet.amino = function(symbol) {
+        return {
+            'a':'ala', 'ala':'a',
+            'r':'arg', 'arg':'r',
+            'n':'asn',
+            'd':'asp',
+            'c':'cys',
+            'q':'gln',
+            'e':'glu',
+            'g':'gly',
+            'h':'his',
+            'i':'ile',
+            'l':'leu',
+            'k':'lys',
+            'm':'met',
+            'f':'phe',
+            'p':'pro',
+            's':'ser',
+            't':'thr',
+            'w':'trp',
+            'y':'tyr',
+            'v':'val',
+            'b':'asx',
+            'z':'glx',
+            'x':'xxx'
+        }[symbol];
+};
+
+BIO.alphabet.nucleic = function(symbol) {
+};
+
+/*
+ *  OBIFlow: Omics and Bioinformatics visual programming workflow
+ *  Copyright (C) 2016  Jean-Christophe Taveau.
+ *
+ *  This file is part of OBIFlow
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with mowgli.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Authors:
+ * Jean-Christophe Taveau
+ */
+
 function Board(div_name,w,h) {
 
     this.name = div_name;
@@ -322,6 +519,89 @@ Graph.prototype.printGraphDebug = function(tok,graph) {
  * Jean-Christophe Taveau
  */
 
+function Popup(div_name) {
+
+    this.name = div_name;
+
+}
+
+Popup.prototype.addContent = function() {
+    return document.getElementById(this.name);
+};
+
+
+Popup.prototype.getHTMLElement = function() {
+    return document.getElementById(this.name);
+};
+
+Popup.prototype.init = function () {
+    // TODO
+    var self = this;
+    var el = document.getElementById(this.name); 
+    
+    // Close button
+    var closeB = document.querySelector('#' + this.name + ' .titlebar #close');
+    closeB.addEventListener(
+        'click',
+        function(ev) {
+            document.getElementById(self.name).style.display = 'none';
+        }
+    );
+    
+    // Titlebar
+    var titlebar = document.querySelector('#' + this.name + ' .titlebar');
+    titlebar.addEventListener(
+        'mousedown',
+        function(ev) {
+            // TODO;
+        }
+    );
+
+    titlebar.addEventListener(
+        'mousemove',
+        function(ev) {
+            // TODO;
+        }
+    );
+
+    titlebar.addEventListener(
+        'mouseup',
+        function(ev) {
+            // TODO;
+        }
+    );
+
+}
+
+Popup.prototype.render = function () {
+    // TODO
+
+}
+
+/*
+ *  OBIFlow: Omics and Bioinformatics visual programming workflow
+ *  Copyright (C) 2016  Jean-Christophe Taveau.
+ *
+ *  This file is part of OBIFlow
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with mowgli.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *
+ * Authors:
+ * Jean-Christophe Taveau
+ */
+
 function SandBox(div_name) {
     this.name = div_name;
     this.element = document.getElementById(this.name);
@@ -346,10 +626,11 @@ SandBox.allTokens = [
     {type: 'function'     , copies: 10, current: 0},
     {type: 'hub'          , copies: 10, current: 0},
     {type: 'if_then_else' , copies: 10, current: 0},
-    {type: 'input_ro'     , copies: 10, current: 0},
-    {type: 'input_rw'     , copies: 10, current: 0},
     {type: 'input_cloud'  , copies: 10, current: 0},
     {type: 'input_new'    , copies: 10, current: 0},
+    {type: 'input_ro'     , copies: 10, current: 0},
+    {type: 'input_rw'     , copies: 10, current: 0},
+    {type: 'input_start'  , copies: 1 , current: 0},
     {type: 'map'          , copies: 10, current: 0},
     {type: 'return_filter', copies: 10, current: 0},
     {type: 'return_fold'  , copies: 10, current: 0},
@@ -378,9 +659,6 @@ SandBox.prototype.addTokens = function(toks) {
 
 SandBox.prototype.init = function() {
     var self = this;
-    // Update Sandbox
-    //var max_tokens_per_row = Math.floor(parseInt(this.element.clientWidth) / Game.TOKENSIZE);
-    //this.element.style.height = (Game.TOKENSIZE * Math.floor(this.tokens.length / max_tokens_per_row) ) + 'px';
 
     this.tokens.forEach(
         function (tok,index,array) {
@@ -605,6 +883,42 @@ Token.prototype.init = function() {
         },
         false);
         
+        // Settings buttonSW
+        var xy = {
+            'oixx' : '0px',
+            'oxix' : '-80px',
+            'oxxi' : '-160px',
+            'ooxi' : '-240px',
+            'oxoi' : '-320px',
+            'oxii' : '-400px',
+            'oixi' : '-480px',
+            'oooi' : '-540px',
+            'oiii' : '-640px'
+        }
+        var settings = document.querySelector('#'+self.name +' .settings');
+        if (settings !== null) {
+            settings.addEventListener(
+                'click',
+                function (ev) {
+                    document.getElementById('popup').style.display = 'inline-block';
+                    document.querySelector('#popup #title').innerHTML = 'Settings';
+                    var content = document.querySelector('#popup .contents');
+
+                    var str = self.knots.reduce(
+                        function (accu,k) {
+                            accu += '<li><a style="float:left" "href="#">'+ k +
+                                '<div class="crop"><img style="position:absolute;left:'+ xy[k] +
+                                '" src="../images/knotSettings.png"></div></a></li>';
+                            return accu;
+                        },
+                        '<ul>'
+                    )
+                    content.innerHTML = str;
+                },
+                false
+            );
+        }
+
 }
 
 
@@ -690,7 +1004,7 @@ var TokenFactory = (function() {
             for (var i=0; i < k.length; i++) {
                 if (k[i] === 'i') {
                     var tmp = document.createElementNS('http://www.w3.org/2000/svg','path');
-                    var angle = 90*i;
+                    var angle = (180 + 90*i) % 360;
                     tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
                     tmp.setAttributeNS(null,'d',arrowHead);
                     tmp.setAttributeNS(null,'fill','#ffffff');
@@ -701,11 +1015,11 @@ var TokenFactory = (function() {
                 }
                 else if (k[i] === 'o') {
                     var tmp = document.createElementNS('http://www.w3.org/2000/svg','rect');
-                    var angle = (90*i + 180)%360; // HACK
+                    var angle = 90*i; 
                     tmp.setAttributeNS(null,'transform','rotate('+angle+',500,500)');
-                    tmp.setAttributeNS(null,'x',500.0 - 165/2.0);
+                    tmp.setAttributeNS(null,'x',500.0 - 150/2.0);
                     tmp.setAttributeNS(null,'y',9.0);
-                    tmp.setAttributeNS(null,'width',165);
+                    tmp.setAttributeNS(null,'width',150);
                     tmp.setAttributeNS(null,'height',128);
                     tmp.setAttributeNS(null,'fill','#FFFFFF');
                     tmp.setAttributeNS(null,'stroke','#000000');
@@ -725,7 +1039,7 @@ var TokenFactory = (function() {
             }
             var tok = new Token(_options);
             console.log(JSON.stringify(tok));
-            
+            tok.currentKnots = tok.knots[0];
             
             // Create GUI 
             
@@ -771,13 +1085,37 @@ var TokenFactory = (function() {
                     console.log(ev.target);
                     var knots_layer = ev.target.parentNode.querySelector("#knots");
                     var arr = knots_layer.getAttributeNS(null, "transform").slice(7,-1).split(',');
+                    // Permutation
+                    tok.currentKnots = tok.currentKnots[3] + tok.currentKnots.substr(0,3);
+                    
                     arr[0] = (parseInt(arr[0])+90)%360;
                     knots_layer.setAttributeNS(null,'transform','rotate('+arr.join(',')+')');
                 });
             svg.appendChild(buttonNE);
             
+            if (tok.knots.length > 1) {
+                var buttonSW = document.createElementNS('http://www.w3.org/2000/svg','circle');
+                buttonSW.setAttributeNS(null,'class','settings');
+                buttonSW.setAttributeNS(null,'cx',150);
+                buttonSW.setAttributeNS(null,'cy',850);
+                buttonSW.setAttributeNS(null,'r',105);
+                buttonSW.setAttributeNS(null,'fill','#FF8000');
+                buttonSW.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+                svg.appendChild(buttonSW);
+            }
+
+/*
+            var buttonSE = document.createElementNS('http://www.w3.org/2000/svg','circle');
+            buttonSE.setAttributeNS(null,'cx',850);
+            buttonSE.setAttributeNS(null,'cy',850);
+            buttonSE.setAttributeNS(null,'r',105);
+            buttonSE.setAttributeNS(null,'fill','#FF8000');
+            buttonSE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
+            svg.appendChild(buttonSE);
+*/
+            
             // Knot(s)
-            svg.appendChild(createKnots(tok.knots[0]) );
+            svg.appendChild(createKnots(tok.currentKnots) );
            
            // Icon
             var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);
@@ -980,16 +1318,13 @@ var TokenSandBoxFactory = (function() {
             var tok = new TokenSandBox(_options);
             tok.name +='_sandbox';
             
-            // Create GUI 
-            
+            // Create GUI  
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttributeNS(null,'width', Game.TOKENSIZE);
             svg.setAttributeNS(null,'height', Game.TOKENSIZE);
             svg.setAttributeNS(null,'viewBox', '0 0 1000 1000');
             svg.setAttributeNS(null,'transform', 'matrix(1 0 0 1 0 0)');
-            
 
-            
             // Background
             var bckgd = document.createElementNS('http://www.w3.org/2000/svg','rect');
             bckgd.setAttributeNS(null,'x',9.0);
@@ -1010,6 +1345,7 @@ var TokenSandBoxFactory = (function() {
             svg.appendChild(bckgd);
             
             // Button(s)
+            /*
             var buttonNW = document.createElementNS('http://www.w3.org/2000/svg','circle');
             buttonNW.setAttributeNS(null,'cx',150);
             buttonNW.setAttributeNS(null,'cy',150);
@@ -1025,7 +1361,7 @@ var TokenSandBoxFactory = (function() {
             buttonNE.setAttributeNS(null,'fill','#FF8000');
             buttonNE.setAttributeNS(null,'style','stroke:#000000;stroke-width:18.0;');
             svg.appendChild(buttonNE);
-            
+            */
            
            // Icon
             var primitive = document.createElementNS("http://www.w3.org/2000/svg",tok.svg.type);
@@ -1088,7 +1424,7 @@ var tokenIDs = {
         "name"   :"calcArray",
         "comment": "Container of Array Functions",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "Array Calculator",
         "input"  : "number",
         "output" : "number",
@@ -1110,7 +1446,7 @@ var tokenIDs = {
         "name"   :"calcNumber",
         "comment": "Container of arithmetic Functions",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "Calculator",
         "input"  : "number",
         "output" : "number",
@@ -1160,7 +1496,7 @@ var tokenIDs = {
         "name"   : "calcString",
         "comment": "Container of String Functions",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "String Calculator",
         "input"  : "string",
         "output" : "any",
@@ -1273,6 +1609,14 @@ var tokenIDs = {
                 "output" : "[string]",
                 "args": ["regex"]
             },
+            {
+                "name": "repeat",
+                "args": ["number"],
+                "comment": "Returns string with the same repeated pattern",
+                "input"  : "string",
+                "output" : "string",
+                "args": ["regex"]
+            },
         ]
      },
     'database'     :  {
@@ -1302,7 +1646,7 @@ var tokenIDs = {
         "name"   : "filter",
         "comment": "Filter Function",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","oxoi","oixo"],
         "title"  : "Filter",
         "svg"    : {
             "type": "path",
@@ -1316,7 +1660,7 @@ var tokenIDs = {
         "name"   : "fold",
         "comment": "Fold/Reduce Function",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","oxoi","oixo"],
         "title"  : "Fold/Reduce",
         "svg"    : {
             "type": "path",
@@ -1333,7 +1677,7 @@ var tokenIDs = {
         "name"   : "function",
         "comment": "Function f(x)",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
+        "knots"  : ["oxix","oixx","oxxi"],
         "title"  : "Function f(x)",
         "svg"    : {
             "type": "circle",
@@ -1345,7 +1689,7 @@ var tokenIDs = {
         "name"   : "hub",
         "comment": "Hub used to insert additional inputs in the flow",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
+        "knots"  : ["oxix","oixx","oxxi","oxii","oixi","oiii"],
         "title"  : "Hub",
         "svg"    : {
             "type": "g",
@@ -1364,7 +1708,7 @@ var tokenIDs = {
         "name"   : "if_then_else",
         "comment": "if_then_else works as a predicate: a function returning a boolean (true or false)",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","ooxi"],
         "title"  : "IF (condition) THEN return true ELSE return false",
         "input"  : "any",
         "output" : "boolean",
@@ -1385,16 +1729,58 @@ var tokenIDs = {
                 "0,9.1485 6.51473,15.66342 6.51536,6.51479 15.6643,6.51479 z m 301.62297,243.96033 q 0,20.23763 -12.89105,36.31684 -12.89106,16.07922 "+
                 "-32.57429,25.22771 -19.68261,9.14856 -40.05916,13.72278 -20.37654,4.57428 -38.67316,4.57428 -18.29724,0 -38.67379,-4.57428 "+
                 "-20.37591,-4.57422 -40.05915,-13.72278 -19.6826,-9.14849 -32.57366,-25.22771 -12.89168,-16.07921 -12.89168,-36.31684 0,-3.0495 "+
-                "9.70321,-22.45541 9.70321,-19.40591 25.50528,-48.37624 15.80145,-28.97034 29.66327,-54.19805 13.86118,-25.22764 28.27664,-51.00988 14.41608,-25.78217 15.52526,-27.72274 4.99033,-9.1485 15.52462,-9.1485 10.53494,0 15.52463,9.1485 1.10918,1.94057 15.52526,27.72274 14.41546,25.78224 28.27664,51.00988 13.86119,25.22771 29.6639,54.19805 15.80144,28.97033 25.50465,48.37624 9.70258,19.40591 9.70258,22.45541 z m -354.85126,0 q 0,20.23763 -12.89105,36.31684 -12.89042,16.07922 -32.57429,25.22771 -19.6826,9.14856 -40.05915,13.72278 -20.37655,4.57428 -38.67316,4.57428 -18.29725,0 -38.6738,-4.57428 -20.37528,-4.57422 -40.05915,-13.72278 -19.6826,-9.14849 -32.57429,-25.22771 -12.89105,-16.07921 -12.89105,-36.31684 0,-3.0495 9.70257,-22.45541 9.70321,-19.40591 25.50529,-48.37624 15.80208,-28.97034 29.66327,-54.19805 13.86182,-25.22764 28.2779,-51.00988 14.41546,-25.78217 15.524,-27.72274 4.98969,-9.1485 15.52526,-9.1485 10.53493,0 15.52463,9.1485 1.10917,1.94057 15.52462,27.72274 14.41546,25.78224 28.27728,51.00988 13.86118,25.22771 29.66326,54.19805 15.80208,28.97033 25.50529,48.37624 9.70257,19.40591 9.70257,22.45541 z"
+                "9.70321,-22.45541 9.70321,-19.40591 25.50528,-48.37624 15.80145,-28.97034 29.66327,-54.19805 13.86118,-25.22764 28.27664,-51.00988 "+
+                "14.41608,-25.78217 15.52526,-27.72274 4.99033,-9.1485 15.52462,-9.1485 10.53494,0 15.52463,9.1485 1.10918,1.94057 15.52526,27.72274 "+
+                "14.41546,25.78224 28.27664,51.00988 13.86119,25.22771 29.6639,54.19805 15.80144,28.97033 25.50465,48.37624 9.70258,19.40591 9.70258,22.45541 z"+
+                " m -354.85126,0 q 0,20.23763 -12.89105,36.31684 -12.89042,16.07922 -32.57429,25.22771 -19.6826,9.14856 -40.05915,13.72278 "+
+                "-20.37655,4.57428 -38.67316,4.57428 -18.29725,0 -38.6738,-4.57428 -20.37528,-4.57422 -40.05915,-13.72278 -19.6826,-9.14849 "+
+                "-32.57429,-25.22771 -12.89105,-16.07921 -12.89105,-36.31684 0,-3.0495 9.70257,-22.45541 9.70321,-19.40591 25.50529,-48.37624 "+
+                "15.80208,-28.97034 29.66327,-54.19805 13.86182,-25.22764 28.2779,-51.00988 14.41546,-25.78217 15.524,-27.72274 4.98969,-9.1485 "+
+                "15.52526,-9.1485 10.53493,0 15.52463,9.1485 1.10917,1.94057 15.52462,27.72274 14.41546,25.78224 28.27728,51.00988 13.86118,25.22771 "+
+                "29.66326,54.19805 15.80208,28.97033 25.50529,48.37624 9.70257,19.40591 9.70257,22.45541 z"
             }
         },
     },
-    'input_ro'     :  {
+    'input_cloud'  :  {
+         "ID"    : "CLUD_TOK",
+        "name"   : "input_cloud",
+        "comment": "Input obtained from the cloud",
+        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
+        "knots"  : ["oxxx"],
+        "title"  : "Input from the Cloud",
+        "svg"    : {
+            "type": "path",
+            "data": {
+                "d": "m 598.96942,529.62308 q 0,-4.37584 -2.81303,-7.18887 -2.81304,-2.81303 -7.18887,-2.81303 H 518.95427 V 409.60035 q 0,-4.06327 "+
+                "-2.96931,-7.03258 -2.96931,-2.96931 -7.03258,-2.96931 h -60.01136 q -4.06327,0 -7.03258,2.96931 -2.96932,2.96931 -2.96932,7.03258 "+
+                "v 110.02083 h -70.01325 q -4.06327,0 -7.03258,2.96932 -2.96931,2.9693 -2.96931,7.03258 0,4.37582 2.81303,7.18885 l 110.02082,110.02082 "+
+                "q 2.81304,2.81303 7.18887,2.81303 4.37583,0 7.18886,-2.81303 L 595.84383,537.12449 q 3.12559,-3.75071 3.12559,-7.50141 z m 200.03788,70.01324 "+
+                "q 0,49.6969 -35.16291,84.85981 -35.16291,35.16291 -84.85982,35.16291 H 338.92019 q -57.82345,0 -98.92498,-41.10154 -41.10153,-41.10153 "+
+                "-41.10153,-98.92496 0,-40.63269 21.87914,-75.0142 21.87914,-34.38151 58.76112,-51.57226 -0.62512,-9.37678 -0.62512,-13.44004 0,-66.26255"+
+                " 46.88388,-113.14643 46.88388,-46.88388 113.14642,-46.88388 48.75923,0 89.23565,27.19265 40.47641,27.19265 58.9174,72.20117 22.1917,-19.37867"+
+                " 51.88482,-19.37867 33.13129,0 56.57322,23.44194 23.44194,23.44194 23.44194,56.57322 0,23.75449 -12.81493,43.13316 40.6327,9.68933 "+
+                "66.73139,42.35177 26.09869,32.66243 26.09869,74.54535 z"
+            }
+        },
+    },
+    'input_new'  : {
+         "ID"    : "INEW_TOK",
+        "name"   : "input_new",
+        "comment": "Input with creation of a new variable from other input",
+        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
+        "knots"  : ["xoxi","oxix","oixx","oxxi"],
+        "title"  : "Input with Creation",
+        "svg"    : {
+            "type": "circle",
+            "data": {"r": 200, "cx": 500, "cy": 500, "fill": "green"}
+        },
+    },
+    'input_ro'   :  {
          "ID"    : "INRO_TOK",
         "name"   : "input_ro",
         "comment": "Input Read Only",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxx"],
+        "knots"  : ["oxxx"],
         "title"  : "Input Read Only",
         "svg"    : {
             "type": "path",
@@ -1409,12 +1795,12 @@ var tokenIDs = {
             }
         },
     },
-    'input_rw'     :  {
+    'input_rw'   :  {
          "ID"    : "INRW_TOK",
         "name"   : "input_rw",
         "comment": "Input Read/Write",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxx"],
+        "knots"  : ["oxxx"],
         "title"  : "Input Read/Write",
         "svg"    : {
             "type": "path",
@@ -1437,38 +1823,18 @@ var tokenIDs = {
             }
         },
     },
-    'input_cloud'  :  {
-         "ID"    : "CLUD_TOK",
-        "name"   : "input_cloud",
-        "comment": "Input obtained from the cloud",
+    'input_start'     :  {
+         "ID"    : "INST_TOK",
+        "name"   : "input_start",
+        "comment": "Input starting the processing main flow",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Input from the Cloud",
+        "knots"  : ["oxxx"],
+        "title"  : "Input Start",
         "svg"    : {
             "type": "path",
             "data": {
-                "d": "m 598.96942,529.62308 q 0,-4.37584 -2.81303,-7.18887 -2.81304,-2.81303 -7.18887,-2.81303 H 518.95427 V 409.60035 q 0,-4.06327 "+
-                "-2.96931,-7.03258 -2.96931,-2.96931 -7.03258,-2.96931 h -60.01136 q -4.06327,0 -7.03258,2.96931 -2.96932,2.96931 -2.96932,7.03258 "+
-                "v 110.02083 h -70.01325 q -4.06327,0 -7.03258,2.96932 -2.96931,2.9693 -2.96931,7.03258 0,4.37582 2.81303,7.18885 l 110.02082,110.02082 "+
-                "q 2.81304,2.81303 7.18887,2.81303 4.37583,0 7.18886,-2.81303 L 595.84383,537.12449 q 3.12559,-3.75071 3.12559,-7.50141 z m 200.03788,70.01324 "+
-                "q 0,49.6969 -35.16291,84.85981 -35.16291,35.16291 -84.85982,35.16291 H 338.92019 q -57.82345,0 -98.92498,-41.10154 -41.10153,-41.10153 "+
-                "-41.10153,-98.92496 0,-40.63269 21.87914,-75.0142 21.87914,-34.38151 58.76112,-51.57226 -0.62512,-9.37678 -0.62512,-13.44004 0,-66.26255"+
-                " 46.88388,-113.14643 46.88388,-46.88388 113.14642,-46.88388 48.75923,0 89.23565,27.19265 40.47641,27.19265 58.9174,72.20117 22.1917,-19.37867"+
-                " 51.88482,-19.37867 33.13129,0 56.57322,23.44194 23.44194,23.44194 23.44194,56.57322 0,23.75449 -12.81493,43.13316 40.6327,9.68933 "+
-                "66.73139,42.35177 26.09869,32.66243 26.09869,74.54535 z"
+                "d":"m 314.0625,721.25 0,12 346.875,0 0,-12 -346.875,0 z m 61.71875,-96 0,12 285.15625,0 0,-12 -285.15625,0 z m -61.71875,64 0,12 346.875,0 0,-12 -346.875,0 z m 62.5,-96 0,12 284.375,0 0,-12 -284.375,0 z m -0.375,64 0,12 284.75,0 0,-12 -284.75,0 z M 348.25,355.3125 q 0,15.75 -14,24.0625 v 276.9375 q 0,2.84375 -2.07812,4.92188 -2.07813,2.07812 -4.92188,2.07812 h -14 q -2.84375,0 -4.92187,-2.07812 Q 306.25,659.15625 306.25,656.3125 V 379.375 q -14,-8.3125 -14,-24.0625 0,-11.59375 8.20313,-19.79687 8.20312,-8.20313 19.79687,-8.20313 11.59375,0 19.79687,8.20313 8.20313,8.20312 8.20313,19.79687 z m 322,14 v 166.90625 q 0,5.46875 -2.73438,8.42188 -2.73437,2.95312 -8.64062,6.01562 -47.03125,25.375 -80.71875,25.375 -13.34375,0 -27.01563,-4.8125 -13.67187,-4.8125 -23.73437,-10.5 -10.0625,-5.6875 -25.26562,-10.5 -15.20313,-4.8125 -31.17188,-4.8125 -42,0 -101.5,31.9375 -3.71875,1.96875 -7.21875,1.96875 -5.6875,0 -9.84375,-4.15625 Q 348.25,571 348.25,565.3125 V 403 q 0,-7 6.78125,-12.03125 4.59375,-3.0625 17.28125,-9.40625 51.625,-26.25 92.09375,-26.25 23.40625,0 43.75,6.34375 20.34375,6.34375 47.90625,19.25 8.3125,4.15625 19.25,4.15625 11.8125,0 25.70313,-4.59375 13.89062,-4.59375 24.0625,-10.28125 10.17187,-5.6875 19.25,-10.28125 9.07812,-4.59375 11.92187,-4.59375 5.6875,0 9.84375,4.15625 4.15625,4.15625 4.15625,9.84375 z M 252.1875,203.875 a 9.0009,9.0009 0 0 0 -9,8.96875 L 241.90625,814.375 a 9.0009,9.0009 0 0 0 9,9 l 485.03125,0 a 9.0009,9.0009 0 0 0 9,-9 l 0,-472.625 a 9.0009,9.0009 0 0 0 -2.34375,-6.03125 l -116.6875,-128.4375 a 9.0009,9.0009 0 0 0 -6.625,-2.9375 L 252.1875,203.875 z m 8.96875,18 354.09375,0.46875 111.6875,122.875 0,460.15625 -467,0 1.21875,-583.5 z"
             }
-        },
-    },
-    'input_new'    : {
-         "ID"    : "INEW_TOK",
-        "name"   : "input_new",
-        "comment": "Input with creation of a new variable from other input",
-        "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
-        "title"  : "Input with Creation",
-        "svg"    : {
-            "type": "circle",
-            "data": {"r": 200, "cx": 500, "cy": 500, "fill": "green"}
         },
     },
     'map'          : {
@@ -1476,7 +1842,7 @@ var tokenIDs = {
         "name"   : "map",
         "comment": "Map Function",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xooi","ooxi"],
+        "knots"  : ["ooxi","oxoi","oixo"],
         "title"  : "Map Function",
         "input"  : "[any]",
         "output" : "[any]",
@@ -1551,7 +1917,7 @@ var tokenIDs = {
         "name"   : "settings",
         "comment": "Settings used by some tool",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxx"],
+        "knots"  : ["oxxx"],
         "title"  : "Settings",
         "svg"    : {
             "type": "circle",
@@ -1563,7 +1929,7 @@ var tokenIDs = {
         "name"   : "search",
         "comment": "Search. Accepts a Regex as argument",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xoxi","xixo","oixx","ioxx"],
+        "knots"  : ["xoxi","oxix","oixx","oxxi"],
         "title"  : "Search",
         "svg"    : {
             "type": "path",
@@ -1577,7 +1943,7 @@ var tokenIDs = {
         "name"   : "view",
         "comment": "-",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xxix"],
+        "knots"  : ["ixxx"],
         "title"  : "View",
         "input"  : "any",
         "output" : "none",
@@ -1664,7 +2030,7 @@ var tokenIDs = {
         "name"   :"plot",
         "comment": "-",
         "props"  : Token.CLOSABLE | Token.CONTAINABLE | Token.LINKABLE | Token.MOVABLE | Token.SWITCHABLE | Token.RENDERABLE | Token.ROTATABLE,
-        "knots"  : ["xxix"],
+        "knots"  : ["ixxx"],
         "title"  : "Plot",
         "input"  : "any",
         "output" : "none",

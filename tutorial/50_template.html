@@ -33,10 +33,10 @@
     
         var sequence = {
             title : 'protein',
-            data :  'LISAAIMELESFRITES'
+            data :  'LEU ILE SER ALA ALA ILE MET GLU LEU GLU SER PHE ARG ILE THR GLU SER'
         };
         
-        BIO.Input.of(sequence).wordcount(2).log();
+        BIO.Input.of(sequence).toLowerCase().splitWord(4).log();
 
     </script>
 </head>

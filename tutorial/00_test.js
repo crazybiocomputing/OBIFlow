@@ -58,9 +58,10 @@ function init() {
 */
 
 
-    // Attach board and sandbox to game
+    // Attach all the components (board, sandbox,etc.) to game
     game.add(board);
     game.add(sandbox);
+    game.add(new Popup('popup'));
     
     // Init
     game.init();
