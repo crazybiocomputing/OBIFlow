@@ -27,38 +27,16 @@
  * Jean-Christophe Taveau
  -->
 
+    <script type="text/javascript" src="../javascripts/OBIFlow.js"></script>
+    
     <script type="text/javascript">
     
-    var sequence = {
-        title : 'proteine',
-        data :  'LISAAIMELESFRITES'
-    };
-    /**
-     * BIO.Input.of(sequence).wordcount({slidingWindow: 11}).show();
-     * 
-     * 
-     */
-    // Global
-    var slidingWindow = 11;
-    var halfWindow = Math.floor(slidingWindow/2);
-    
-    // Start
-   
-    var hydropathy = (' '.repeat(halfWindow) + sequence.data + ' '.repeat(halfWindow))
-        .toLowerCase()
-        .split('')                                                     // <- Convert {string} into {array}
-        .map(
-            (x,i,array) => array.slice(i-halfWindow,i+1+halfWindow)
-        )
-        .filter(
-            (x) => ((x.length === slidingWindow) ? true : false)                // Only get arrays of length window
-        )
-        .map(
-//            (x) => x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) 
-            (x) => [x[5],x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) / slidingWindow ]
-        );
-        console.log(JSON.stringify(hydropathy));
+        var sequence = {
+            title : 'protein',
+            data :  'LISAAIMELESFRITES'
+        };
         
+        BIO.Input.of(sequence).wordcount(2).log();
 
     </script>
 </head>

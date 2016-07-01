@@ -23,7 +23,6 @@
  */
 
 
-var BIO = {};
 
 BIO.alphabet = {};
 
