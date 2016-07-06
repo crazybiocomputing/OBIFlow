@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>wordcount</title>
+    <title>EMBOSS examples</title>
   <!--
  *  OBIFlow: Omics and Bioinformatics visual programming workflow
  *  Copyright (C) 2016  Jean-Christophe Taveau.
@@ -52,6 +52,28 @@
 	console.log("\nThreeToOne applied on the following protein\n", sequence.data, "\nResult :");
    
 	BIO.Input.of(sequence).toLowerCase().splitWord(4).threeToOne().log();
+	
+	/* revseq example*/
+
+	sequence = {
+		title : "adn",
+		data : "CTACGTTACGATTCA"
+	};
+	
+	console.log("\nrevseq applied on the following dna sequence \n", sequence.data, "\nResult : ");
+	
+	BIO.Input.of(sequence).toLowerCase().split('').revseq().log();
+      
+      	/* tm example */
+      	
+      	sequence = {
+		title : "adn",
+		data : "ATGAGTGAACGTCTGAGCATTACCCGCTGGGGCCGTATATCGGCGCA"
+	};
+	
+	console.log("\ntm applied on the following dna sequence \n", sequence.data, "\nResult : ");
+	
+	BIO.Input.of(sequence3).toLowerCase().split('').tm().log();
 	
     </script>
 </head>
