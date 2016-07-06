@@ -111,7 +111,8 @@
 
         return Input.of(result);
     }
-
+    
+    
     /**
     * threeToOne :: Obj -> Obj
     *
@@ -126,6 +127,44 @@
             
         return Input.of(result);
     }
+    
+    /**
+     * revseq :: Obj -> Obj 
+     * 
+     */
+    
+    Input.prototype.revseq = function() {
+    	var result = {title: this.__value.title};
+        result.data = this.__value.data
+		.reduce(
+			(accu,x) => {accu.unshift(BIO.alphabet.complementNucleic(x));return accu;},
+		[])
+    		.join('');
+    	return Input.of(result);
+    };
+    
+    /**
+     * tm :: Obj -> Number
+     * 
+     */
+     Input.prototype.tm = function () {
+     	var result = {title:this.__value.title};
+	result.data = this.__value.data;
+	var tm = this.__value.data
+		.reduce(
+                (accu,x) => {accu[x]++; return accu;},
+                {a:0, t:0, g:0, c:0}
+            	);
+	
+		if (result.data.length < 14) {
+			var tmCalcul = (tm.a+tm.t)*2+(tm.g+tm.c)*4;
+			return Input.of(Math.round(tmCalcul*100)/100);
+		}
+		else {
+			var tmCalcul = 64.9 + 41*(tm.g + tm.c - 16.4) / result.data.length;
+			return Input.of(Math.round(tmCalcul*100)/100);
+		}
+     };
 
     /**
     * wordcount :: Obj -> Obj
@@ -227,6 +266,15 @@ BIO.alphabet.hydropathy_scores = function(symbol){
 };
 
 BIO.alphabet.nucleic = function(symbol) {
+};
+
+BIO.alphabet.complementNucleic = function(symbol) {
+	return {
+		't':'a', 
+		'a':'t',
+		'c':'g', 
+		'g':'c'	
+	}[symbol];
 };
 
 /*
