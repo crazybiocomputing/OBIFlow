@@ -89,10 +89,10 @@
      *
      */
     
-	/**
-	 * hydropathy :: Obj -> Obj
-	 *
-	 */
+    /**
+    * hydropathy :: Obj -> Obj
+    * 
+    */
     Input.prototype.hydropathy = function(settings){
 	var slidingWindow = settings.slidingWindow;
 	var halfWindow =  Math.floor(slidingWindow /2);
@@ -112,11 +112,10 @@
         return Input.of(result);
     }
 
-	/**
-	 * threeToOne :: Obj -> Obj
-	 *
-	 */		
-	
+    /**
+    * threeToOne :: Obj -> Obj
+    *
+    */		
     Input.prototype.threeToOne = function() {
         var result = {title: this.__value.title} 
         result.data = this.__value.data
@@ -128,11 +127,10 @@
         return Input.of(result);
     }
 
-	/**
-	 * wordcount :: Obj -> Obj
-	 *
-	 */
-	
+    /**
+    * wordcount :: Obj -> Obj
+    *
+    */
     Input.prototype.wordcount = function(settings) {
         // settings.word_length
         // TODO
