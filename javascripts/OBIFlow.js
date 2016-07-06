@@ -90,7 +90,7 @@
      */
     
     /**
-    * hydropathy :: Obj -> Obj
+    * hydropathy :: String -> [[]]
     * 
     */
     Input.prototype.hydropathy = function(settings){
@@ -106,15 +106,15 @@
                 (x) => ((x.length === slidingWindow) ? true : false)        // Only get arrays of length window
             )
 	   .map(
-	       x =>  Math.round(x.reduce( (total, aa) => total + Math.floor(BIO.alphabet.hydropathy_scores(aa)), 0 )/slidingWindow*100)/100
-     )            // Returns mean of the window's amino acids' hydropathy
+	       x =>  [x[5], Math.round(x.reduce( (total, aa) => total + Math.floor(BIO.alphabet.hydropathy_scores(aa)), 0 )/slidingWindow*100)/100]
+     )            // Returns each amico acid with the mean of the window's amino acids' hydropathy
 
         return Input.of(result);
     }
     
     
     /**
-    * threeToOne :: Obj -> Obj
+    * threeToOne :: String -> String
     *
     */		
     Input.prototype.threeToOne = function() {
@@ -167,14 +167,30 @@
      };
 
     /**
-    * wordcount :: Obj -> Obj
+    * wordcount :: String -> Number
     *
     */
-    Input.prototype.wordcount = function(settings) {
-        // settings.word_length
-        // TODO
-        return Input.of(this.__value);
+     Input.prototype.wordcount = function(settings) {
+        var word_length = settings.word_length;
+		var result = {title: this.__value.title};
+		result.data = this.splitWord(word_length).__value.data.length;
+		return Input.of(result);
     }
+    
+    /**
+    * compseq :: String -> Obj
+    *
+    */
+     Input.prototype.compseq = function(){
+	var result = {title: this.__value.title};
+	result.data = this.__value.data
+		.split('')
+		.reduce(
+			(accu, x) => ( accu[x] = accu[x]+1, accu), {'A':0, 'C':0, 'G':0, 'T':0}
+		)
+	return Input.of(result);
+      }
+
 
     exports.Input = Input;
     
