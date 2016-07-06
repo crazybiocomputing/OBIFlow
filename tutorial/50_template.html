@@ -24,7 +24,7 @@
  *
  *
  * Authors:
- * Jean-Christophe Taveau
+ * Jean-Christophe Taveau, Savandara Besse, Kristina Kastano
  -->
 
     <script type="text/javascript" src="../javascripts/OBIFlow.js"></script>
@@ -73,8 +73,29 @@
 	
 	console.log("\ntm applied on the following dna sequence \n", sequence.data, "\nResult : ");
 	
-	BIO.Input.of(sequence3).toLowerCase().split('').tm().log();
+	BIO.Input.of(sequence).toLowerCase().split('').tm().log();
 	
+		
+	/* Wordcount example */
+		
+	sequence = {
+		title : 'proteine',
+		data :  'LISAAIMELESFRITES'
+        };
+		
+	console.log("Count of words of length 3 in", sequence.data);
+	BIO.Input.of(sequence).wordcount({word_length: 3}).log();
+	
+	/* Compseq example */
+		
+	sequence = {
+		title : 'dna',
+		data :  'ATGAGTGAACGTCTGAGCATTACCCCGCTGGGGCCGTATATCGGCGCA'
+        };
+		
+	console.log("\nCompseq of", sequence.data);
+	BIO.Input.of(sequence).compseq().log();
+			
     </script>
 </head>
 <body>
