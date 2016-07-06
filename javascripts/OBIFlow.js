@@ -298,7 +298,7 @@ BIO.alphabet.hydropathy_scores = function(symbol){
 BIO.alphabet.nucleic = function(symbol) {
 };
 
-BIO.alphabet.complementNucleic = function(symbol) {
+BIO.alphabet.complementNucleicDNA = function(symbol) {
 	return {
 		't':'a', 
 		'a':'t',
@@ -306,6 +306,16 @@ BIO.alphabet.complementNucleic = function(symbol) {
 		'g':'c'	
 	}[symbol];
 };
+
+BIO.alphabet.complementNucleicRNA = function(symbol) {
+	return {
+		'u':'a', 
+		'a':'u',
+		'c':'g', 
+		'g':'c'	
+	}[symbol];
+};
+
 
 /*
  *  OBIFlow: Omics and Bioinformatics visual programming workflow
