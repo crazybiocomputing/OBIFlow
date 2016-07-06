@@ -88,46 +88,56 @@
      * E M B O S S 
      *
      */
-
-
+    
+	/**
+	 * hydropathy :: Obj -> Obj
+	 *
+	 */
     Input.prototype.hydropathy = function(settings){
-        var halfWindow = settings[slidingWindow]/2;
-        var result = (' '.repeat(halfWindow) + this.__value.data + ' '.repeat(halfWindow))
+	var slidingWindow = settings.slidingWindow;
+	var halfWindow =  Math.floor(slidingWindow /2);
+        var result = this.__value.data
             .toLowerCase()
-            .split('')                                                     // <- Convert {string} into {array}
+            .split('')                                                    // <- Convert {string} into {array}
             .map(
                 (x,i,array) => array.slice(i-halfWindow,i+1+halfWindow)
             )
             .filter(
-                (x) => ((x.length === slidingWindow) ? true : false)                // Only get arrays of length window
+                (x) => ((x.length === slidingWindow) ? true : false)        // Only get arrays of length window
             )
-            .map(
-    //            (x) => x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) 
-                (x) => [x[5],x.reduce( (total,aa) => total += Math.floor(Math.random()*10.0),0) / slidingWindow ]
-            );
+	   .map(
+	       x =>  Math.round(x.reduce( (total, aa) => total + Math.floor(BIO.alphabet.hydropathy_scores(aa)), 0 )/slidingWindow*100)/100
+     )            // Returns mean of the window's amino acids' hydropathy
+
         return Input.of(result);
     }
 
-
+	/**
+	 * threeToOne :: Obj -> Obj
+	 *
+	 */		
+	
     Input.prototype.threeToOne = function() {
         var result = {title: this.__value.title} 
         result.data = this.__value.data
             .map(
-                (x) => BIO.alphabet.amino[x]
-            );
+                (x) => BIO.alphabet.amino(x.slice(0,-1)) // slice used to remove the space : "ala " -> "ala"
+	    )
+	    .join('').toUpperCase();
             
         return Input.of(result);
     }
 
+	/**
+	 * wordcount :: Obj -> Obj
+	 *
+	 */
+	
     Input.prototype.wordcount = function(settings) {
         // settings.word_length
         // TODO
         return Input.of(this.__value);
     }
-
-
-
-
 
     exports.Input = Input;
     
