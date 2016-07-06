@@ -30,28 +30,28 @@
     <script type="text/javascript" src="../javascripts/OBIFlow.js"></script>
 
     <script type="text/javascript">
-		/* Hydropathy example*/
+	/* Hydropathy example*/
 
-		var sequence = {
-			title : 'proteine',
-			data :  'LISAAIMELESFRITES'
+	var sequence = {
+		title : 'proteine',
+		data :  'LISAAIMELESFRITES'
         };
 		
-		console.log("Hydropathy profile for the protein", sequence.data);
+	console.log("Hydropathy profile for the protein", sequence.data);
 		
 	
-		BIO.Input.of(sequence).hydropathy({slidingWindow: 11}).log();      
+	BIO.Input.of(sequence).hydropathy({slidingWindow: 11}).log();      
       
-		/* ThreeToOne example*/
+	/* ThreeToOne example*/
       
         sequence = {
             title : 'protein',
             data :  'LEU ILE SER ALA ALA ILE MET GLU LEU GLU SER PHE ARG ILE THR GLU SER '
         };
 		
-		console.log("\nThreeToOne applied on the following protein\n", sequence.data, "\nResult :");
+	console.log("\nThreeToOne applied on the following protein\n", sequence.data, "\nResult :");
    
-		BIO.Input.of(sequence).toLowerCase().splitWord(4).threeToOne().log();
+	BIO.Input.of(sequence).toLowerCase().splitWord(4).threeToOne().log();
 	
     </script>
 </head>
