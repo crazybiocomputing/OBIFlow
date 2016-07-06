@@ -135,12 +135,26 @@
     
     Input.prototype.revseq = function() {
     	var result = {title: this.__value.title};
-        result.data = this.__value.data
-		.reduce(
-			(accu,x) => {accu.unshift(BIO.alphabet.complementNucleic(x));return accu;},
-		[])
-    		.join('');
-    	return Input.of(result);
+        result.data = this.__value.data; 
+
+        if (result.data.indexOf('u') == -1) {
+            result.data = result.data
+				.reduce((accu,x) => {accu.unshift(BIO.alphabet.complementNucleicDNA(x));return accu;}
+                ,[]
+                )
+    			.join('');
+            return Input.of(result);
+        }
+        else {
+            result.data = result.data
+                .reduce((accu,x) => {accu.unshift(BIO.alphabet.complementNucleicRNA(x));return accu;}
+                ,[]
+                )
+                .join('');
+            return Input.of(result);
+
+        }
+
     };
     
     /**
@@ -219,7 +233,7 @@
  *
  *
  * Authors:
- * Jean-Christophe Taveau
+ * Jean-Christophe Taveau, Kristina Kastano, Savandara Besse
  */
 
 
