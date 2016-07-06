@@ -19,7 +19,7 @@
  *
  *
  * Authors:
- * Jean-Christophe Taveau
+ * Jean-Christophe Taveau, Kristina Kastano, Savandara Besse
  */
 
 
