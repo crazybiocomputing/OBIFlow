@@ -139,7 +139,7 @@
 
         if (result.data.indexOf('u') == -1) {
             result.data = result.data
-				.reduce((accu,x) => {accu.unshift(BIO.alphabet.complementNucleicDNA(x));return accu;}
+		.reduce((accu,x) => {accu.unshift(BIO.alphabet.complementNucleicDNA(x));return accu;}
                 ,[]
                 )
     			.join('');
