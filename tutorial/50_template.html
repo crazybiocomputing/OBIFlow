@@ -62,7 +62,7 @@
 	
 	console.log("\nrevseq applied on the following dna sequence \n", sequence.data, "\nResult : ");
 	
-	BIO.Input.of(sequence).toLowerCase().split('').revseq().log();
+	BIO.Input.of(sequence).toLowerCase().split('').revseq({nucleic_acid: "dna"}).log();
 	
 	sequence = {
 		title : "arn",
