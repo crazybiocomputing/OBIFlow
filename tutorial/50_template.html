@@ -73,6 +73,17 @@
 	
 	BIO.Input.of(sequence).toLowerCase().split('').revseq().log();
       
+      				
+	/* Transeq example */
+		
+	sequence = {
+		title : 'arn',
+		data :  'AUGAGUGAACGUCUGAGCAUUACCCCGCUGGGGCCGUAUAUCGGCGCA'
+        };
+		
+	console.log("\nTranslation of", sequence.data.toLowerCase());
+	BIO.Input.of(sequence).toLowerCase().transeq().log();
+      
       	/* tm example */
       	
       	sequence = {
