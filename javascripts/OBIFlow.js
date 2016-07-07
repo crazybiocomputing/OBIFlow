@@ -128,37 +128,33 @@
         return Input.of(result);
     }
     
-    /**
-     * revseq :: Obj -> Obj 
+    
+     /**
+     * revseq :: String -> String 
      * 
      */
-    
-    Input.prototype.revseq = function() {
+    Input.prototype.revseq = function(settings) {
     	var result = {title: this.__value.title};
         result.data = this.__value.data; 
 
-        if (result.data.indexOf('u') == -1) {
+        if ( settings.nucleic_acid === "dna" ) {
             result.data = result.data
-		.reduce((accu,x) => {accu.unshift(BIO.alphabet.complementNucleicDNA(x));return accu;}
-                ,[]
-                )
-    			.join('');
-            return Input.of(result);
+				.reduce((accu,x) => {accu.unshift(BIO.alphabet.complementNucleicDNA(x));return accu;}
+                ,[])
+    		.join('');
         }
         else {
             result.data = result.data
                 .reduce((accu,x) => {accu.unshift(BIO.alphabet.complementNucleicRNA(x));return accu;}
-                ,[]
-                )
+                ,[])
                 .join('');
-            return Input.of(result);
-
         }
-
+	return Input.of(result);
     };
     
+    
     /**
-     * tm :: Obj -> Number
+     * tm :: String -> Number
      * 
      */
      Input.prototype.tm = function () {
