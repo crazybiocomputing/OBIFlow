@@ -313,6 +313,28 @@ BIO.alphabet.hydropathy_scores = function(symbol){
     }[symbol]
 };
 
+
+BIO.alphabet.genetic_code = function(symbol) {
+    return {
+        'uuu': 'F', 'ucu': 'S', 'uau': 'Y', 'ugu': 'C',
+        'uuc': 'F', 'ucc': 'S', 'uac': 'Y', 'ugc': 'C',
+        'uua': 'L', 'uca': 'S', 'uaa': '*', 'uga': '*',
+        'uug': 'L', 'ucg': 'S', 'uag': '*', 'ugg': 'W',
+        'cuu': 'L', 'ccu': 'P', 'cau': 'H', 'cgu': 'R',
+        'cuc': 'L', 'ccc': 'P', 'cac': 'H', 'cgc': 'R',
+        'cua': 'L', 'cca': 'P', 'caa': 'Q', 'cga': 'R',
+        'cug': 'L', 'ccg': 'P', 'cag': 'Q', 'cgg': 'R',
+        'auu': 'I', 'acu': 'T', 'aau': 'N', 'agu': 'S',
+        'auc': 'I', 'acc': 'T', 'aac': 'N', 'agc': 'S',
+        'aua': 'I', 'aca': 'T', 'aaa': 'K', 'aga': 'R',
+        'aug': 'M', 'acg': 'T', 'aag': 'K', 'agg': 'R',
+        'guu': 'V', 'gcu': 'A', 'gau': 'D', 'ggu': 'G',
+        'guc': 'V', 'gcc': 'A', 'gac': 'D', 'ggc': 'G',
+        'gua': 'V', 'gca': 'A', 'gaa': 'E', 'gga': 'G',
+        'gug': 'V', 'gcg': 'A', 'gag': 'E', 'ggg': 'G',
+        }[symbol]
+};
+
 BIO.alphabet.nucleic = function(symbol) {
 };
 
