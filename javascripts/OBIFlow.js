@@ -222,6 +222,37 @@
 		)
 	return Input.of(result);
       }
+      
+     /**
+      * transcription :: String -> String
+      * 
+      */
+      Input.prototype.transcription = function() {
+      	var result = {title:"arn"};
+        result.data = this.__value.data 
+            .reduce( 
+                (accu, x) => {accu.push(BIO.alphabet.transcription(x)); return accu;},
+            [])
+            .join('');
+        return Input.of(result);
+    }
+    
+    /**
+     * isComplementary:: Obj -> Boolean
+     * 
+     */
+     Input.prototype.isComplementary = function() {
+     	var result = {type : "adn"};
+        result.data1 = this.__value.data1
+        	.split('')
+		.reduce((accu,x) => {accu.push(BIO.alphabet.complementNucleicDNA(x));return accu;}
+                ,[]
+                )
+            	.join('');
+        result.data2 = this.__value.data2
+        return Input.of((result.data1 === result.data2) ? true : false);
+    }
+   
 
 
     exports.Input = Input;
@@ -356,6 +387,14 @@ BIO.alphabet.complementNucleicRNA = function(symbol) {
 	}[symbol];
 };
 
+BIO.alphabet.transcription = function(symbol) {
+		return {
+			'a':'a', 
+			't':'u',
+			'c':'c', 
+			'g':'g'	
+		}[symbol];
+	};	
 
 /*
  *  OBIFlow: Omics and Bioinformatics visual programming workflow
