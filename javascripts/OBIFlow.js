@@ -151,6 +151,28 @@
         }
 	return Input.of(result);
     };
+   
+    /**
+    * transeq :: String -> [String]
+    *
+    */	
+    Input.prototype.transeq = function(){
+	var result = {title : this.__value.title}
+	result.data = this.__value.data
+		.split('')
+		.reduce(
+		    (accu, x, i, array) => {
+			accu[i%3].push( array.slice(i, i+3).join('') );
+			var rev_codon = Input.of({title: "", data : array.slice(i, i+3)}).revseq({nucleic_acid: "rna"}).__value.data;
+			accu[i%3+3].unshift( rev_codon );
+			return accu; }, [[], [], [], [], [], []]
+		)
+		.map(
+	            frame => frame.filter( function(x){ return x.length == 3; }  ).map( x => (BIO.alphabet.genetic_code(x)) ).join('')
+		);
+	return Input.of(result);
+    };
+	
     
     
     /**
