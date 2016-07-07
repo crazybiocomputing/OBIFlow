@@ -71,7 +71,7 @@
 	
 	console.log("\nrevseq applied on the following rna sequence \n", sequence.data, "\nResult : ");
 	
-	BIO.Input.of(sequence).toLowerCase().split('').revseq().log();
+	BIO.Input.of(sequence).toLowerCase().split('').revseq({nucleic_acid: "rna"}).log();
       
       				
 	/* Transeq example */
